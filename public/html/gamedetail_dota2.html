@@ -3,12 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pentagram - Dota 2</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>gamedetail - Dota 2</title>
+
+    <link rel="stylesheet" href="../css/gamedetail-style.css" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
+
+    <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
         theme: {
@@ -25,19 +28,6 @@
         },
       };
     </script>
-    <style>
-      ::-webkit-scrollbar {
-        width: 0px;
-        background: transparent;
-      }
-      /* บังคับความสูงบรรทัดให้เท่ากันเพื่อป้องกันระยะเหลื่อม */
-      h1,
-      h2,
-      p,
-      span {
-        line-height: 1.2 !important;
-      }
-    </style>
   </head>
   <body class="bg-gray-900 text-white font-sans antialiased">
     <div
@@ -46,8 +36,59 @@
       <div
         class="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] z-50 bg-app-bg shadow-xl"
       >
-        <div id="navbar-placeholder"></div>
-        <div id="game-selector-placeholder"></div>
+        <div id="navbar-placeholder">
+          <nav
+            class="h-[70px] bg-[#1B1B2F] border-b border-white/20 flex items-center justify-between px-4 box-border"
+          >
+            <a href="javascript:void(0)" id="home-logo">
+              <img
+                src="../resource/pentagram-logo.png"
+                alt="Pentagram Logo"
+                class="h-[35px] object-contain"
+              />
+            </a>
+            <div class="text-white text-xl cursor-pointer">
+              <i class="fa-solid fa-xmark"></i>
+            </div>
+          </nav>
+        </div>
+
+        <div
+          class="h-auto bg-[#162447] px-3 py-4 border-b border-white/10 box-border"
+        >
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-white text-[18px] font-bold">Game Details</h2>
+            <i
+              class="fa-regular fa-circle-xmark text-white text-xl cursor-pointer"
+            ></i>
+          </div>
+          <div class="grid grid-cols-2 gap-2 w-full">
+            <a
+              id="btn-dota2"
+              href="./gamedetail_dota2.html"
+              class="flex items-center justify-center gap-3 h-[60px] rounded font-bold transition-all shadow-md"
+            >
+              <img
+                src="../resource/dota2-logo.png"
+                alt="Dota 2"
+                class="w-8 h-8 rounded-sm object-cover"
+              />
+              <span>Dota 2</span>
+            </a>
+            <a
+              id="btn-lol"
+              href="./gamedetail_lol.html"
+              class="flex items-center justify-center gap-3 h-[60px] rounded font-bold transition-all shadow-md"
+            >
+              <img
+                src="../resource/lol-logo.png"
+                alt="LoL"
+                class="w-8 h-8 rounded-sm object-cover"
+              />
+              <span>LoL</span>
+            </a>
+          </div>
+        </div>
       </div>
 
       <main class="p-3 space-y-4">
@@ -95,13 +136,51 @@
         </section>
       </main>
 
-      <div
-        id="bottom-nav-placeholder"
-        class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] z-50"
-      ></div>
+      <nav
+        class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] z-50 h-[60px] bg-[#1a1a2e] border-t border-white/20 flex items-center justify-around px-2 box-border"
+      >
+        <a
+          id="nav-home"
+          href="#"
+          class="p-2 flex items-center justify-center transition-colors"
+        >
+          <i class="fa-solid fa-house text-[22px]"></i>
+        </a>
+        <a
+          id="nav-star"
+          href="#"
+          class="p-2 flex items-center justify-center transition-colors"
+        >
+          <div
+            class="w-7 h-7 bg-current rounded-full flex items-center justify-center"
+          >
+            <i class="fa-solid fa-star text-[#1a1a2e] text-[14px]"></i>
+          </div>
+        </a>
+        <a
+          id="nav-add"
+          href="#"
+          class="p-2 flex items-center justify-center transition-colors"
+        >
+          <i class="fa-solid fa-plus text-[26px]"></i>
+        </a>
+        <a
+          id="nav-heart"
+          href="#"
+          class="p-2 flex items-center justify-center transition-colors"
+        >
+          <i class="fa-solid fa-heart text-[24px]"></i>
+        </a>
+        <a
+          id="nav-profile"
+          href="#"
+          class="p-2 flex items-center justify-center transition-colors"
+        >
+          <i class="fa-solid fa-circle-user text-[26px]"></i>
+        </a>
+      </nav>
     </div>
 
-    <script src="../js/gamedetailheader-script.js"></script>
     <script src="../js/gamedetail_dota2-script.js"></script>
   </body>
 </html>

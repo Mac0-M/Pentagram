@@ -1,3 +1,75 @@
+// ลบ renderNavbar เดิมออก แล้วใช้ฟังก์ชันนี้แทน
+function setupHomeNavigation() {
+  const logo = document.getElementById('home-logo');
+  if (logo) {
+    logo.addEventListener('click', () => {
+      window.location.href = 'index.html'; // หรือ path หน้า home ของคุณ
+    });
+  }
+}
+// เปลี่ยนชื่อฟังก์ชันให้สื่อความหมายมากขึ้นว่าเป็นการเซ็ตอัพ ไม่ใช่เรนเดอร์ HTML แล้ว
+function setupGameSelector(activePage) {
+  // ดึง element ปุ่มทั้งสองมา
+  const btnDota = document.getElementById('btn-dota2');
+  const btnLol = document.getElementById('btn-lol');
+
+  if (!btnDota || !btnLol) return; // ถ้าหาปุ่มไม่เจอให้หยุดทำงาน
+
+  // กำหนดกลุ่มของ Class ที่ใช้ตอน Active และ Inactive
+  const activeClasses = ['bg-[#104245]', 'text-white', 'border', 'border-[#238c8f]'];
+  const inactiveClasses = ['bg-[#181f3b]', 'text-[#8b8c98]', 'border', 'border-white/10'];
+
+  // เช็คว่าอยู่หน้าไหน แล้วใส่ Class ตามเงื่อนไข
+  if (activePage === 'dota2') {
+    btnDota.classList.add(...activeClasses);
+    btnLol.classList.add(...inactiveClasses);
+  } else if (activePage === 'lol') {
+    btnLol.classList.add(...activeClasses);
+    btnDota.classList.add(...inactiveClasses);
+  }
+}
+
+function setupBottomNav(activeTab = 'profile') {
+  // สร้างรายชื่อ ID ของ Tab ทั้งหมด
+  const tabs = {
+    home: document.getElementById('nav-home'),
+    star: document.getElementById('nav-star'),
+    add: document.getElementById('nav-add'),
+    heart: document.getElementById('nav-heart'),
+    profile: document.getElementById('nav-profile')
+  };
+
+  const activeClass = 'text-white';
+  const inactiveClass = 'text-[#8b8c98]';
+
+  // วนลูปจัดการทุก Tab
+  Object.keys(tabs).forEach(key => {
+    const el = tabs[key];
+    if (!el) return;
+
+    if (key === activeTab) {
+      el.classList.add(activeClass);
+      el.classList.remove(inactiveClass);
+    } else {
+      el.classList.add(inactiveClass);
+      el.classList.remove(activeClass);
+    }
+  });
+}
+
+// ฟังก์ชันเริ่มต้นสำหรับโหลดส่วนหัวและแถบนำทาง
+// เราแก้ไขค่าเริ่มต้นของ activeTab จาก 'home' เป็น 'profile' ที่นี่ครับ
+function initHeader(options = {}) {
+  // เปลี่ยนค่า default ของ activeTab จาก 'home' ไปเป็น 'profile'
+  const { activePage = 'lol', activeTab = 'profile' } = options;
+  setupGameSelector(activePage);
+  // เรียก setupBottomNav โดยใช้ activeTab ที่ถูกตั้งค่าใหม่
+  setupBottomNav(activeTab);
+}
+
+
+
+
 const LOL_DATA = {
   topChampions: [
     { img: "", winRate: 75, wins: 3, losses: 1, matches: 4, kda: "4.67", kdaDetail: "8/3/6" },
