@@ -141,11 +141,13 @@ body {
   height: 112px;
 }
 
-.rank-icon-placeholder {
+/* ลบ .rank-icon-placeholder อันเก่าทิ้ง แล้วใส่โค้ดนี้แทนครับ */
+.rank-image {
   width: 80px;
   height: 80px;
-  background-color: #2a3a5a;
-  border-radius: 4px;
+  border-radius: 50%; /* เปลี่ยนจาก 4px เป็น 50% เพื่อให้เป็นวงกลมสมบูรณ์ */
+  object-fit: contain; /* ให้รูป Rank แสดงครบถ้วนไม่ถูกตัด */
+  background-color: #2a3a5a; /* คงสีพื้นหลังไว้เผื่อรูป Rank เป็นพื้นใส */
   flex-shrink: 0;
 }
 
