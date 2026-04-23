@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pentagram - Dota 2</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              "app-bg": "#162447",
+              "card-bg": "#1F4068",
+              "nav-bg": "#1B1B2F",
+              win: "#40AFFF",
+              lose: "#FF4060",
+              gold: "#FABC60",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      ::-webkit-scrollbar {
+        width: 0px;
+        background: transparent;
+      }
+      /* บังคับความสูงบรรทัดให้เท่ากันเพื่อป้องกันระยะเหลื่อม */
+      h1,
+      h2,
+      p,
+      span {
+        line-height: 1.2 !important;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-900 text-white font-sans antialiased">
+    <div
+      class="w-full max-w-[480px] mx-auto bg-app-bg min-h-screen relative shadow-2xl pt-[220px] pb-[70px]"
+    >
+      <div
+        class="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] z-50 bg-app-bg shadow-xl"
+      >
+        <div id="navbar-placeholder"></div>
+        <div id="game-selector-placeholder"></div>
+      </div>
+
+      <main class="p-3 space-y-4">
+        <div
+          class="bg-nav-bg border border-white/20 rounded-lg p-4 h-[82px] flex flex-col justify-center"
+        >
+          <h1 class="text-xl font-bold">pmsslnwza007</h1>
+          <p class="text-xs text-gray-300 mt-1.5">
+            Game ID :
+            <span class="font-bold text-white tracking-wide">125168159</span>
+          </p>
+        </div>
+
+        <div class="h-px bg-white/20 w-full"></div>
+
+        <section>
+          <h2 class="text-lg font-bold mb-3 h-6 flex items-center">Rank</h2>
+          <div
+            class="bg-card-bg/50 border-[3px] border-card-bg rounded-xl p-4 flex items-center gap-4 h-[112px]"
+          >
+            <div class="w-20 h-20 bg-[#2a3a5a] rounded shrink-0"></div>
+            <div>
+              <div class="text-2xl font-bold text-gold">Archon 1</div>
+              <div class="text-lg font-bold">2,310 MMR</div>
+            </div>
+          </div>
+        </section>
+
+        <div class="h-px bg-white/20 w-full"></div>
+
+        <section>
+          <h2 class="text-lg font-bold mb-3 h-6 flex items-center">
+            Top Heroes
+          </h2>
+          <div class="grid grid-cols-2 gap-3" id="dota2-heroes-grid"></div>
+        </section>
+
+        <div class="h-px bg-white/20 w-full"></div>
+
+        <section>
+          <h2 class="text-lg font-bold mb-3 h-6 flex items-center">
+            Recent Matches
+          </h2>
+          <div class="space-y-3" id="dota2-match-list"></div>
+        </section>
+      </main>
+
+      <div
+        id="bottom-nav-placeholder"
+        class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] z-50"
+      ></div>
+    </div>
+
+    <script src="../js/gamedetailheader-script.js"></script>
+    <script src="../js/gamedetail_dota2-script.js"></script>
+  </body>
+</html>
