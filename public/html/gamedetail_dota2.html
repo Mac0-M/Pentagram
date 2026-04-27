@@ -29,7 +29,7 @@
       };
     </script>
   </head>
-  <body class="bg-gray-900 text-white font-sans antialiased">
+  <body>
     <div class="app-container">
       <div class="top-fixed-section">
         <nav class="navbar">
@@ -86,11 +86,24 @@
         <section>
           <h2 class="section-title">Rank</h2>
           <div class="rank-card">
-            <img
-              src="../resource/dota2-rank.png"
-              alt="Dota 2 Rank"
-              class="rank-image"
-            />
+            
+            <div class="relative w-[96px] h-[96px] flex items-center justify-center shrink-0">
+              
+              <svg class="absolute inset-0 w-full h-full transform -rotate-90">
+                <circle cx="48" cy="48" r="44" stroke="rgba(255, 255, 255, 0.1)" stroke-width="4" fill="none" />
+                <circle cx="48" cy="48" r="44" stroke="#FABC60" stroke-width="4" fill="none"
+                        stroke-linecap="round"
+                        stroke-dasharray="276"
+                        stroke-dashoffset="276" 
+                        id="dota-progress-ring" />
+              </svg>
+
+              <img
+                src="../resource/dota2-rank.png"
+                alt="Dota 2 Rank"
+                class="rank-image relative z-10 !w-[76px] !h-[76px]"
+              />
+            </div>
             <div>
               <div style="font-size: 1.5rem; font-weight: bold; color: #fabc60">
                 Archon 1

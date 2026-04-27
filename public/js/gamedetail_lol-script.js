@@ -169,7 +169,30 @@ function renderLoLPage() {
   }
 }
 
+// ฟังก์ชันสำหรับอัปเดตเส้นวงกลม Rank
+function updateRankProgress(currentLP, maxLP = 100) {
+  // ดึง element วงกลมที่เราใส่ id ไว้ใน HTML
+  const progressRing = document.getElementById('rank-progress-ring');
+  
+  if (!progressRing) return; // ถ้าไม่เจอวงกลม ให้ข้ามไป
+
+  // 1. กำหนดค่าเส้นรอบวง (ต้องตรงกับใน HTML)
+  const circumference = 276;
+
+  // 2. ป้องกันไม่ให้แต้มเกิน 100% หรือติดลบ
+  const percent = Math.min(Math.max((currentLP / maxLP) * 100, 0), 100);
+
+  // 3. คำนวณส่วนที่ต้องซ่อน (offset)
+  const offset = circumference - (percent / 100) * circumference;
+
+  // 4. สั่งให้ CSS วาดเส้นตามค่าที่คำนวณได้ พร้อมใส่ Transition ให้มันค่อยๆ วิ่ง
+  progressRing.style.transition = 'stroke-dashoffset 1s ease-in-out';
+  progressRing.style.strokeDashoffset = offset;
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   if (typeof initHeader === 'function') initHeader({ activePage: 'lol' });
   renderLoLPage();
+  // เรียกใช้ฟังก์ชันอัปเดตเส้นวงกลม Rank
+  updateRankProgress(75); // ตัวอย่าง: 75 LP จาก 100 LP
 });

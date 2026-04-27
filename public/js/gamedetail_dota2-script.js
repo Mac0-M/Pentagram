@@ -148,7 +148,35 @@ function renderDotaPage() {
   }
 }
 
+// ฟังก์ชันสำหรับอัปเดตเส้นวงกลม Rank ของ Dota 2
+function updateDotaRankProgress(currentMMR, minMMR, maxMMR) {
+  const progressRing = document.getElementById('dota-progress-ring');
+  if (!progressRing) return;
+
+  const circumference = 276;
+
+  // 1. หาว่าช่องว่างของแรงค์นี้ต้องใช้กี่แต้ม
+  const mmrRange = maxMMR - minMMR;
+  
+  // 2. หาว่าตอนนี้ทำได้กี่แต้มแล้วจากช่องว่างนั้น
+  const currentProgress = currentMMR - minMMR;
+
+  // 3. คำนวณเป็นเปอร์เซ็นต์
+  let percent = (currentProgress / mmrRange) * 100;
+
+  // ป้องกันไม่ให้เกิน 100% หรือติดลบ (เผื่อใส่เลขผิด)
+  percent = Math.min(Math.max(percent, 0), 100);
+
+  // 4. คำนวณระยะที่ต้องซ่อนเส้น
+  const offset = circumference - (percent / 100) * circumference;
+
+  progressRing.style.transition = 'stroke-dashoffset 1s ease-in-out';
+  progressRing.style.strokeDashoffset = offset;
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   if (typeof initHeader === 'function') initHeader({ activePage: 'dota2' });
   renderDotaPage();
+  // เรียกใช้ฟังก์ชันอัปเดตเส้นวงกลม Rank ของ Dota 2
+  updateDotaRankProgress(2310, 2000, 3000); // ตัวอย่าง: 2310 MMR จาก 2000-3000 MMR
 });
