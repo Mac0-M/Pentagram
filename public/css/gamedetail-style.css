@@ -203,3 +203,157 @@ span {
   line-height: 1.2 !important;
   margin: 0;
 }
+
+.rank-card {
+  background-color: var(--color-bg-card);
+  border: 3px solid var(--card-border);
+  border-radius: 12px;
+  padding: 16px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: 1fr 1fr; /* แบ่งครึ่งความสูงให้ ชื่อ กับ คะแนน เท่าๆ กัน */
+  column-gap: 15px;
+  align-items: center;
+  height: auto; /* ปลดล็อกความสูง ให้ยืดตามเนื้อหาด้านใน */
+  min-height: 128px; /* กำหนดขั้นต่ำให้พอดีกับรูปวงกลม 96px + ช่องว่าง 32px */
+}
+
+.rank-circle-wrap {
+  grid-column: 1 / 2;
+  grid-row: 1 / 3;
+}
+
+.rank-name {
+  grid-column: 2 / 3;
+  grid-row: 1 / 2;
+  align-self: flex-end;
+}
+
+.rank-mmr {
+  grid-column: 2 / 3;
+  grid-row: 2 / 3;
+  align-self: flex-start;
+  margin-top: 4px;
+}
+
+/* ============================================================
+   Responsive Desktop Layout (หน้าจอใหญ่กว่า 700px)
+   ============================================================ */
+@media (min-width: 701px) {
+  /* 1. ขยายขนาด Container และ Nav หลักให้รองรับจอคอมพิวเตอร์ */
+  .app-container,
+  .top-fixed-section,
+  .bottom-nav {
+    max-width: 900px; 
+  }
+
+  /* 2. เปลี่ยน main-content เป็น Grid 2 คอลัมน์ */
+  .main-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr; 
+    grid-template-areas:
+      "banner banner"
+      "champs rank"
+      "recent recent";
+    gap: 24px; 
+    padding: 24px;
+    align-items: stretch; 
+  }
+
+  /* 3. ซ่อนเส้นคั่น (Divider) ในโหมด Desktop เพื่อให้ Grid ดูสะอาดตา */
+  .main-content > .divider {
+    display: none;
+  }
+
+  /* 4. กำหนดชื่อ Area ให้แต่ละกล่องตามที่เราตั้งไว้ใน HTML */
+  .info-banner {
+    grid-area: banner;
+    margin-bottom: 0; 
+  }
+
+  .rank-section {
+    grid-area: rank;
+    display: flex;
+    flex-direction: column;
+    height: 94%;
+  }
+
+  .character-section {
+    grid-area: champs;
+  }
+
+  .recent-section {
+    grid-area: recent;
+    grid-column: 1 / -1; 
+    width: 100%;
+    display: block; 
+  }
+
+  .rank-card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    padding: 30px;
+
+    height: auto !important;
+    min-height: 100%;
+  }
+
+  .rank-circle-wrap {
+    order: 2;
+    transform: scale(1.8); /* ขยายรูปและวงกลมให้ใหญ่สะใจขึ้น (จากเดิม 1.3) */
+    margin: 40px 0; /* ดันให้ห่างจากข้อความบนและล่างมากขึ้น */
+  }
+
+  .rank-name {
+    order: 1;
+    align-self: center !important;
+    text-align: center;
+    font-size: 2.25rem !important;
+  }
+
+  .rank-mmr {
+    order: 3;
+    align-self: center !important;
+    text-align: center;
+    font-size: 1.5rem !important; 
+  }
+
+  #dota2-match-list,
+  #lol-match-list {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  #dota2-match-list > div > div:last-child,
+  #lol-match-list > div > div:last-child {
+    justify-content: space-between !important; 
+    margin-top: 24px;
+    margin-bottom: 12px;
+  }
+
+  /* 2. ขยายกลุ่มรูปฝั่งซ้าย โดยให้ยึดเส้นขอบซ้ายไว้ (ตรงกับคำว่า Ranked Solo) */
+  #dota2-match-list > div > div:last-child > div:first-child,
+  #lol-match-list > div > div:last-child > div:first-child {
+    transform: scale(1.5); 
+    transform-origin: left center; 
+  }
+
+  /* 3. ขยายกลุ่มรูปฝั่งขวา โดยให้ยึดเส้นขอบขวาไว้ (ตรงกับเวลา) */
+  #dota2-match-list > div > div:last-child > div:last-child,
+  #lol-match-list > div > div:last-child > div:last-child {
+    transform: scale(1.5); 
+    transform-origin: right center; 
+  }
+
+
+  /* 4. ขยายข้อความ "เวลา" (ฝั่งขวา) */
+  #dota2-match-list > div > div:first-child > span:last-child,
+  #lol-match-list > div > div:first-child > span:last-child {
+    font-size: 1rem !important; 
+  }
+}
