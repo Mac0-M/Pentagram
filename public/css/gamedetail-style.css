@@ -236,6 +236,11 @@ span {
   margin-top: 4px;
 }
 
+.desktop-menu-container,
+.full-width-menu {
+  display: none; 
+}
+
 /* ============================================================
    Responsive Desktop Layout (หน้าจอใหญ่กว่า 700px)
    ============================================================ */
@@ -355,5 +360,71 @@ span {
   #dota2-match-list > div > div:first-child > span:last-child,
   #lol-match-list > div > div:first-child > span:last-child {
     font-size: 1rem !important; 
+  }
+/* ซ่อนแถบ Navbar ด้านล่าง */
+  .bottom-nav {
+    display: none !important; 
+  }
+  
+  /* แสดงปุ่ม Hamburger */
+  .desktop-menu-container {
+    display: block;
+  }
+
+  .hamburger-icon {
+    transition: color 0.2s, transform 0.3s ease;
+  }
+
+  .hamburger-icon:hover {
+    color: var(--color-text-gold);
+  }
+
+  /* กล่อง Dropdown กางเต็มความกว้าง สีน้ำเงินเข้มตามธีมเว็บ */
+  .full-width-menu {
+    display: none; 
+    position: absolute;
+    top: 70px; /* ใต้ Navbar พอดี */
+    left: 0;
+    width: 100%; 
+    background-color: var(--color-bg-nav); /* ใช้สีธีมหลัก */
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+    z-index: 100;
+    flex-direction: column;
+    padding: 0; /* ลบ padding รวมออก เพื่อให้แถบ hover ชิดขอบ */
+  }
+
+  .full-width-menu.show {
+    display: flex;
+  }
+
+  /* สไตล์รายการเมนู */
+  .full-width-menu a {
+    padding: 16px 24px;
+    color: white; /* ตัวอักษรสีขาว */
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05); /* เส้นคั่นบางๆ */
+    transition: all 0.2s;
+  }
+
+  .full-width-menu a:last-child {
+    border-bottom: none;
+  }
+
+  /* เวลาเอาเมาส์ชี้ให้มีไฮไลท์อ่อนๆ และเปลี่ยนไอคอนเป็นสีทอง */
+  .full-width-menu a:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--color-text-gold);
+  }
+  
+  .full-width-menu a i {
+    font-size: 1.25rem;
+    width: 24px;
+    text-align: center;
   }
 }

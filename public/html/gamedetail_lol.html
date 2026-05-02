@@ -32,16 +32,59 @@
   <body>
     <div class="app-container">
       <div class="top-fixed-section">
-        <nav class="navbar">
-          <a href="javascript:void(0)" id="home-logo">
-            <img
-              src="../resource/pentagram-logo.png"
-              alt="Pentagram Logo"
-              class="navbar-logo"
-            />
-          </a>
-          <div class="close-icon"><i class="fa-solid fa-xmark"></i></div>
+        <nav
+          class="navbar"
+          style="
+            position: relative;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+          "
+        >
+          <!-- กลุ่มด้านซ้าย: เรียงจากซ้ายสุด 3 ขีด -> โลโก้ -->
+          <div style="display: flex; align-items: center; gap: 20px">
+            <!-- 1. ปุ่ม 3 ขีด / กากบาท -->
+            <div class="desktop-menu-container">
+              <!-- เพิ่ม width: 32px และจัดให้อยู่ตรงกลาง เพื่อล็อคขนาดไม่ให้โลโก้ขยับ -->
+              <div
+                class="hamburger-icon"
+                id="hamburger-menu"
+                style="
+                  font-size: 24px;
+                  cursor: pointer;
+                  color: white;
+                  width: 32px;
+                  display: flex;
+                  justify-content: center;
+                "
+              >
+                <i class="fa-solid fa-bars" id="menu-icon"></i>
+              </div>
+            </div>
+
+            <!-- 2. โลโก้ Pentagram -->
+            <a
+              href="javascript:void(0)"
+              id="home-logo"
+              style="display: flex; align-items: center"
+            >
+              <img
+                src="../resource/pentagram-logo.png"
+                alt="Pentagram Logo"
+                class="navbar-logo"
+              />
+            </a>
+          </div>
         </nav>
+
+        <!-- Dropdown Menu กางเต็มความกว้าง (วางไว้ใต้ nav เหมือนเดิม) -->
+        <div class="desktop-dropdown full-width-menu" id="desktop-dropdown">
+          <a href="#"><i class="fa-solid fa-house"></i> Home</a>
+          <a href="#"><i class="fa-solid fa-star"></i> Star</a>
+          <a href="#"><i class="fa-solid fa-plus"></i> Add</a>
+          <a href="#"><i class="fa-solid fa-heart"></i> Heart</a>
+          <a href="#"><i class="fa-solid fa-circle-user"></i> Profile</a>
+        </div>
 
         <div class="game-selector-panel">
           <div class="game-selector-header">

@@ -27,9 +27,9 @@ function setupGameSelector(activePage) {
 function setupBottomNav(activeTab = 'profile') {
   const tabs = {
     home: document.getElementById('nav-home'),
-    star: document.getElementById('nav-star'),
+    feed: document.getElementById('nav-feed'),
     add: document.getElementById('nav-add'),
-    heart: document.getElementById('nav-heart'),
+    heart: document.getElementById('nav-favorite'),
     profile: document.getElementById('nav-profile')
   };
 
@@ -47,13 +47,6 @@ function setupBottomNav(activeTab = 'profile') {
       el.classList.remove(activeClass);
     }
   });
-}
-
-function initHeader(options = {}) {
-  const { activePage = 'dota2', activeTab = 'profile' } = options;
-  setupHomeNavigation();
-  setupGameSelector(activePage);
-  setupBottomNav(activeTab);
 }
 
 // อัปเดตข้อมูลจำลอง พร้อมรูปภาพ Placeholder
@@ -172,6 +165,47 @@ function updateDotaRankProgress(currentMMR, minMMR, maxMMR) {
 
   progressRing.style.transition = 'stroke-dashoffset 1s ease-in-out';
   progressRing.style.strokeDashoffset = offset;
+}
+
+function setupHamburgerMenu() {
+  const hamburgerBtn = document.getElementById('hamburger-menu');
+  const menuIcon = document.getElementById('menu-icon'); // ดึงตัวไอคอนมาเพื่อสลับคลาส
+  const dropdown = document.getElementById('desktop-dropdown');
+  
+  if (hamburgerBtn && dropdown && menuIcon) {
+    // เมื่อคลิกที่ปุ่ม
+    hamburgerBtn.addEventListener('click', (e) => {
+      e.stopPropagation(); 
+      const isShowing = dropdown.classList.toggle('show');
+      
+      // สลับไอคอนระหว่าง 3 ขีด กับ กากบาท
+      if (isShowing) {
+        menuIcon.classList.remove('fa-bars');
+        menuIcon.classList.add('fa-xmark');
+      } else {
+        menuIcon.classList.remove('fa-xmark');
+        menuIcon.classList.add('fa-bars');
+      }
+    });
+
+    // ปิดเมนูอัตโนมัติเมื่อคลิกที่อื่น
+    document.addEventListener('click', (e) => {
+      if (!dropdown.contains(e.target) && !hamburgerBtn.contains(e.target)) {
+        dropdown.classList.remove('show');
+        // รีเซ็ตไอคอนกลับเป็น 3 ขีด
+        menuIcon.classList.remove('fa-xmark');
+        menuIcon.classList.add('fa-bars');
+      }
+    });
+  }
+}
+
+function initHeader(options = {}) {
+  const { activePage = 'dota2', activeTab = 'profile' } = options;
+  setupHomeNavigation();
+  setupGameSelector(activePage);
+  setupBottomNav(activeTab);
+  setupHamburgerMenu();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
