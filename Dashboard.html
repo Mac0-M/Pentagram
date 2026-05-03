@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pentagram - Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="Dashboard.css">
+</head>
+<body>
+
+    <div class="mobile-container">
+        <header class="header">
+            <img src="LOGO.png" class="logo" alt="PENTAGRAM">
+        </header>
+
+        <div class="divider"></div>
+
+        <main class="dashboard-area">
+            <h2 class="section-title">Dashboard</h2>
+            
+            <div class="leaderboard-card">
+                <div class="table-header">
+                    <span class="col-place">Place</span>
+                    <span class="col-name">Player Name</span>
+                    <span class="col-score">Total Score</span>
+                    <span class="col-ranking">Ranging</span>
+                </div>
+
+                <div id="leaderboardList" class="leaderboard-list">
+                    </div>
+
+                <div class="pagination">
+                    <button class="nav-arrow" id="prevBtn"><i class="fas fa-chevron-left"></i></button>
+                    <div class="page-numbers">
+                        <button class="page-btn active" onclick="changePage(1)">1</button>
+                        <button class="page-btn" onclick="changePage(2)">2</button>
+                        <button class="page-btn" onclick="changePage(3)">3</button>
+                        <button class="page-btn" onclick="changePage(4)">4</button>
+                    </div>
+                    <button class="nav-arrow" id="nextBtn"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </main>
+
+         <nav class="bottom-nav">
+            <div class="nav-item active" onclick="setActive(this)">
+                <svg viewBox="0 0 24 24" class="nav-icon"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            </div>
+            <div class="nav-item" onclick="setActive(this)">
+                <svg viewBox="0 0 24 24" class="nav-icon">
+                    <circle cx="12" cy="12" r="11" fill="currentColor"/> 
+                    <path d="M12 7l1.45 4.47H18.2l-3.72 2.7 1.42 4.36L12 15.83l-3.9 2.7 1.42-4.36-3.72-2.7h4.75L12 7z" fill="#1b1b2f"/>
+                </svg>
+            </div>
+            <div class="nav-item" onclick="setActive(this)">
+                <svg viewBox="0 0 24 24" class="nav-icon"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+            </div>
+            <div class="nav-item" onclick="setActive(this)">
+                <svg viewBox="0 0 24 24" class="nav-icon"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            </div>
+            <div class="nav-item" onclick="setActive(this)">
+                <svg viewBox="0 0 24 24" class="nav-icon">
+                    <circle cx="12" cy="12" r="11" fill="currentColor"/> 
+                    <circle cx="12" cy="9.5" r="3.5" fill="#1b1b2f"/> 
+                    <path d="M12 14c-4 0-5.5 2.5-5.5 4.5v.5h11v-.5c0-2-1.5-4.5-5.5-4.5z" fill="#1b1b2f"/>
+                </svg>
+            </div>
+        </nav>
+    </div>
+
+    <script src="Dashboard.js"></script>
+</body>
+</html>
