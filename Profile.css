@@ -1,0 +1,989 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background: #16295a;
+  color: #ffffff;
+}
+
+/* --- Header Style --- */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background: #1b1b2f;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.logo {
+  height: 32px;
+  width: auto;
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.icon-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* --- Bottom Nav Style --- */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 70px;
+  background: #1b1b2f;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 1000;
+}
+
+.nav-item {
+  color: #8a94b8;
+  cursor: pointer;
+  padding: 10px;
+  font-size: 24px;
+  transition: 0.3s;
+}
+
+.nav-item.active {
+  color: #ffffff;
+}
+
+.main-content {
+  padding-bottom: 100px;
+}
+
+.section-title {
+  margin: 0 0 18px;
+  color: #ffffff;
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+
+/* ================= Profile Summary (Updated Avatar Size) ================= */
+.profile-summary {
+  display: flex;
+  /* ปรับให้เนื้อหาเริ่มจากด้านบนเพื่อให้รูปขนาดใหญ่ไม่ดันตัวหนังสือลงมากลางกล่อง */
+  align-items: flex-start; 
+  gap: clamp(20px, 5vw, 40px); 
+  padding: clamp(25px, 6vw, 40px) 24px;
+  background: #162754;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.user-avatar {
+  flex-shrink: 0;
+  /* ขยายขนาดรูปให้ใหญ่ขึ้นชัดเจน (ปรับจาก 110-160px เป็น 140-200px) */
+  width: clamp(300px, 35vw, 260px);  
+  height: clamp(180px, 35vw, 260px);
+  border-radius: 50%;
+  border: 5px solid #1e90ff; /* เพิ่มความหนาเส้นขอบให้เข้ากับขนาดรูป */
+  padding: 0; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #9B9B9B;
+  /* เพิ่มเงาจางๆ ให้รูปดูเด่นออกมา */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.user-avatar svg, 
+.user-avatar img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  color: #ffffff;
+  min-width: 0;
+  /* เพิ่มระยะห่างด้านบนให้ตรงกับขอบบนของรูปภาพพอดี */
+  padding-top: 5px; 
+}
+
+.profile-username {
+  margin: 0 0 8px;
+  /* ปรับขนาด Username ให้สมดุลกับรูปที่ใหญ่ขึ้น */
+  font-size: clamp(24px, 5.5vw, 38px); 
+  font-weight: 800;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #ffffff;
+}
+
+/* ส่วน Game ID เพิ่มระยะห่างให้นิดหน่อยเพื่อให้ดูโปร่งขึ้น */
+.game-id-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 5px;
+}
+
+.game-id-item {
+  display: flex;
+  flex-direction: column; /* แยกชื่อเกมกับ ID คนละบรรทัดเพื่อให้ดูไม่อึดอัดบนมือถือ */
+  line-height: 1.2;
+}
+
+.game-name {
+  font-weight: 700;
+  font-size: clamp(14px, 3vw, 18px);
+  color: #1e90ff; /* เน้นชื่อเกมด้วยสีฟ้า */
+}
+
+.game-id-val {
+  font-size: clamp(12px, 3vw, 18px);
+  word-break: break-all; /* ป้องกัน ID ยาวๆ ดันจนหน้าจอพัง */
+  opacity: 0.8;
+}
+
+/* ปรับแต่งสำหรับมือถือหน้าจอเล็กมาก */
+@media (max-width: 350px) {
+  .profile-summary {
+    gap: 12px;
+    padding: 15px 10px;
+  }
+}
+
+/* ================= Cross Game Status (Final Fixed) ================= */
+.cross-game-status-section {
+  padding: 18px 10px 0;
+  background: transparent;
+}
+
+.cross-game-card {
+  width: 100%;
+  background: #a9afbe;
+  border: 8px solid #222142;
+  border-radius: 24px;
+  padding: 20px 10px 26px; 
+  box-sizing: border-box;
+}
+
+.moba-score-frame {
+  position: relative;
+  width: 100%;
+  /* จำกัดความกว้างสูงสุดไม่ให้ใหญ่เกินไปจนตัวเลขคุมยาก */
+  max-width: 420px; 
+  margin: 0 auto 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.score-frame-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+}
+
+.moba-score-content {
+  position: absolute;
+  /* ใช้ % ที่เจาะจงเพื่อให้ตัวเลขอยู่กึ่งกลางช่องว่างในวงรีพอดี */
+  top: 48%; 
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 75%; /* ลดความกว้างพื้นที่พิมพ์เพื่อไม่ให้ชิดขอบซ้ายขวาเกินไป */
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.moba-score-value {
+  /* ปรับค่า Max ของ clamp ให้เล็กลงนิดหน่อย (จาก 72px เป็น 64px) เพื่อไม่ให้ทับขอบบนล่าง */
+  font-size: clamp(32px, 8vw, 64px);  
+  font-weight: 800;
+  line-height: 0.85;
+  color: #000000;
+  margin: 0;
+}
+
+.moba-score-label {
+  /* ปรับขนาดฉลากให้พอดีกับกรอบ */
+  font-size: clamp(14px, 3.5vw, 22px);
+  font-weight: 700;
+  line-height: 1.1;
+  color: #000000;
+  white-space: nowrap;
+  margin-top: 2px;
+}
+
+.moba-rank-badge {
+  /* ปรับ Margin ของ Badge ให้พอดีพื้นที่ด้านล่างวงรี */
+  margin-top: 4px;
+  min-width: 70px;
+  padding: 3px 12px;
+  border-radius: 999px;
+  background: #223f78;
+  border: 1.5px solid #d8aa5d;
+  color: #ffffff;
+  font-size: clamp(10px, 2.5vw, 16px);
+  font-weight: 500;
+  line-height: 1;
+}
+
+.status-stats {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  gap: 5px;
+  margin-top: 15px;
+  width: 100%;
+}
+
+.status-item {
+  flex: 1;
+  text-align: center;
+}
+
+.status-value {
+  font-size: clamp(22px, 5vw, 42px);
+  font-weight: 700;
+  line-height: 1;
+  color: #000000;
+  margin-bottom: 5px;
+}
+
+.status-name {
+  font-size: clamp(11px, 2.8vw, 20px);
+  font-weight: 600;
+  line-height: 1.1;
+  color: #000000;
+}
+
+.status-divider {
+  width: 2.5px;
+  background: #000000;
+  border-radius: 4px;
+  height: 50px; 
+  align-self: center;
+}
+
+.see-details-btn {
+  width: 100%;
+  margin-top: 20px;
+  height: clamp(50px, 10vw, 75px);
+  border: none;
+  border-radius: 18px;
+  background: linear-gradient(90deg, #1a1b42 0%, #191b43 50%, #17193f 100%);
+  color: #ffffff;
+  font-size: clamp(18px, 4.5vw, 26px);
+  font-weight: 500;
+  cursor: pointer;
+}
+/* --- Section Divider Style --- */
+.section-divider {
+  width: 100%;
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.15); /* สีขาวโปร่งแสง 15% */
+  border: none;
+  margin: 10px 0; /* ระยะห่าง บน-ล่าง ของเส้น */
+}
+
+/* ================= Preferred Roles (Updated) ================= */
+.preferred-roles-section {
+  padding: 20px 10px 0;
+}
+
+.roles-card {
+  background: #a9afbe;
+  border: 8px solid #222142;
+  border-radius: 24px;
+  padding: clamp(15px, 4vw, 25px);
+  display: flex;
+  align-items: center;
+  justify-content: center; /* จัดให้อยู่กลางกรณีจอใหญ่ */
+  gap: clamp(15px, 5vw, 40px);
+  flex-wrap: wrap; /* ทำให้รองรับการตัดขึ้นบรรทัดใหม่บนมือถือ */
+}
+
+.roles-radar {
+  width: clamp(180px, 40vw, 260px); /* ปรับขนาดรูปตามหน้าจอ */
+  aspect-ratio: 1 / 1; /* รักษารูปทรงจัตุรัส */
+  background: rgba(34, 33, 66, 0.1); /* เพิ่มพื้นหลังจางๆ ระหว่างรอรูป */
+  border-radius: 20px;
+  overflow: hidden;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(34, 33, 66, 0.2); /* เพิ่มเส้นขอบให้ดูมีมิติ */
+}
+
+.roles-radar img {
+  width: 90%; /* ให้รูปไม่ชิดขอบจนเกินไป จะดูสวยกว่า */
+  height: 90%;
+  object-fit: contain; /* ป้องกันรูปเบี้ยว */
+  filter: drop-shadow(0 5px 15px rgba(0,0,0,0.1)); /* เพิ่มเงาให้รูป Radar */
+}
+
+.roles-info {
+  color: #000000;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1; /* ให้ข้อความใช้พื้นที่ที่เหลือ */
+  min-width: 200px; /* ป้องกันข้อความแคบเกินไป */
+}
+
+.roles-label {
+  font-size: clamp(18px, 4vw, 30px);
+  font-weight: 500;
+  margin: 0;
+  opacity: 0.8;
+}
+
+.roles-primary {
+  font-size: clamp(32px, 8vw, 56px);
+  font-weight: 800; /* ปรับให้ตัวหนาขึ้นเพื่อความโดดเด่น */
+  margin: 4px 0 12px;
+  line-height: 1;
+  color: #1b1b2f;
+}
+
+.roles-support-label {
+  margin-top: clamp(8px, 2vw, 15px);
+  font-size: clamp(16px, 3.5vw, 26px);
+}
+
+.roles-support {
+  font-size: clamp(22px, 5vw, 38px);
+  font-weight: 600;
+  margin: 4px 0 0;
+  color: #223f78;
+}
+
+/* ปรับปรุงการแสดงผลสำหรับมือถือ หรือหน้าจอขนาดเล็ก */
+@media (max-width: 600px) { /* ขยายเป็น 600px เพื่อให้สลับเป็นแนวตั้งได้เร็วขึ้น */
+  .roles-card {
+    flex-direction: column; /* บังคับให้เปลี่ยนจาก ซ้าย-ขวา เป็น บน-ล่าง */
+    text-align: center;
+    gap: 20px; /* ลดระยะห่างระหว่างรูปกับข้อความ */
+    padding: 30px 15px;
+  }
+
+  .roles-radar {
+    width: 220px; /* กำหนดขนาดรูปให้คงที่เหมาะสมกับมือถือ */
+    margin: 0 auto;
+  }
+
+  .roles-info {
+    width: 100%;
+    align-items: center; /* จัดตัวอักษรให้อยู่กึ่งกลาง */
+    flex: none;
+    min-width: unset; /* สำคัญ: ปลดล็อกความกว้างขั้นต่ำออกเพื่อให้หดได้ตามจอ */
+  }
+
+  .roles-primary {
+    margin-bottom: 20px; /* เพิ่มระยะห่างก่อนถึงหัวข้อ Supporting Role */
+  }
+}
+/* --- Section Divider Style --- */
+.section-divider {
+  width: 100%;
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.15); /* สีขาวโปร่งแสง 15% */
+  border: none;
+  margin: 10px 0; /* ระยะห่าง บน-ล่าง ของเส้น */
+}
+
+/* ================= Skill Tags (Updated) ================= */
+.skill-tags-section {
+  padding: 20px 10px 0;
+}
+
+.skill-tags-grid {
+  display: flex;
+  gap: clamp(10px, 3vw, 20px);
+  /* ทำให้การ์ดตกลงมาข้างล่างอัตโนมัติเมื่อพื้นที่ไม่พอ */
+  flex-wrap: wrap; 
+}
+
+.skill-card {
+  /* ปรับให้ยืดหยุ่นตามหน้าจอ */
+  flex: 1;
+  min-width: 280px; 
+  background: #a9afbe;
+  border: clamp(4px, 1.5vw, 8px) solid #222142;
+  border-radius: 24px;
+  padding: 18px 14px 20px;
+  box-sizing: border-box;
+}
+
+.skill-card-title {
+  text-align: center;
+  font-size: clamp(24px, 5vw, 36px);
+  margin: 0 0 16px;
+  color: #1b1b2f;
+  font-weight: 800;
+}
+
+.skill-tag-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.skill-tag {
+  position: relative;
+  height: clamp(45px, 8vw, 56px);
+  border-radius: 999px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  /* เพิ่มระยะขอบซ้ายเพื่อให้ตัวหนังสือไม่ทับรูปหลักถ้ามี */
+  padding-left: 20px; 
+  transition: transform 0.2s ease;
+  cursor: default;
+  background: #5e687e; /* สีพื้นหลังสำรองระหว่างรอรูป */
+}
+
+.skill-tag:hover {
+  transform: translateX(5px);
+}
+
+.skill-tag img {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  left: 0;
+  top: 0;
+  opacity: 0.8; /* ทำให้รูปจางลงเล็กน้อยเพื่อให้ตัวหนังสืออ่านง่าย */
+}
+
+.skill-tag span {
+  position: relative;
+  z-index: 2;
+  color: #ffffff;
+  font-size: clamp(14px, 3vw, 18px);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5); /* เพิ่มเงาให้ตัวหนังสืออ่านง่ายขึ้น */
+}
+
+/* เลเยอร์สีเข้มทับรูปเพื่อให้ตัวหนังสืออ่านง่าย (Overlay) */
+.skill-tag::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 100%);
+  z-index: 1;
+}
+
+/* ปรับแต่งสำหรับมือถือจอเล็กมาก */
+@media (max-width: 350px) {
+  .skill-card {
+    min-width: 100%;
+  }
+}
+/* --- Section Divider Style --- */
+.section-divider {
+  width: 100%;
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.15); /* สีขาวโปร่งแสง 15% */
+  border: none;
+  margin: 10px 0; /* ระยะห่าง บน-ล่าง ของเส้น */
+}
+
+/* ================= Consistency (Updated) ================= */
+.consistency-section {
+  padding: 20px 10px 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.consistency-wrapper {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* จัดให้อยู่กลางจอ */
+  width: 100%;
+}
+
+.consistency-top-days {
+  display: grid;
+  /* สร้าง Grid 7 คอลัมน์ให้ตรงกับช่องตาราง + 1 คอลัมน์สำหรับที่ว่างด้านหน้า */
+  grid-template-columns: 40px repeat(7, 1fr); 
+  gap: 8px;
+  width: 100%;
+  max-width: 500px; /* คุมความกว้างสูงสุด */
+  margin-bottom: 10px;
+  color: #ffffff;
+  font-size: 14px; /* ปรับขนาดฟอนต์ให้เหมาะกับมือถือ */
+  text-align: center;
+}
+
+/* ปรับให้ Mon, Wed, Fri ไปอยู่ตรงคอลัมน์ที่ถูกต้อง */
+.top-day-mon { grid-column: 3; }
+.top-day-wed { grid-column: 5; }
+.top-day-fri { grid-column: 7; }
+
+.consistency-body {
+  width: 100%;
+  max-width: 500px;
+}
+
+.consistency-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.consistency-row {
+  display: grid;
+  /* คอลัมน์แรกสำหรับวันที่ คอลัมน์ที่เหลือสำหรับช่อง 7 ช่อง */
+  grid-template-columns: 40px repeat(7, 1fr);
+  align-items: center;
+  gap: 8px;
+}
+
+.consistency-date-label {
+  text-align: right;
+  padding-right: 8px;
+  color: #ffffff;
+  font-size: 14px;
+}
+
+.consistency-week {
+  display: contents; /* ใช้ Grid ร่วมกับตัวแม่ (consistency-row) */
+}
+
+.consistency-cell {
+  aspect-ratio: 1 / 1; /* รักษาทรงจัตุรัสอัตโนมัติ */
+  width: 100%;
+  max-width: 50px; /* ขนาดสูงสุดในจอคอม */
+  border-radius: 4px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.consistency-legend {
+  margin-top: 25px;
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  justify-content: flex-end; /* ชิดขวาตามดีไซน์ */
+  align-items: center;
+  gap: 10px;
+}
+
+.legend-label {
+  color: #ffffff;
+  font-size: 16px;
+}
+
+.legend-items {
+  display: flex;
+  gap: 6px;
+}
+
+.legend-box {
+  width: 25px;
+  height: 25px;
+  border-radius: 2px;
+}
+
+/* ปรับขนาดสำหรับจอที่เล็กมาก (เช่น iPhone SE) */
+@media (max-width: 380px) {
+  .consistency-row, .consistency-top-days {
+    gap: 4px;
+    grid-template-columns: 30px repeat(7, 1fr);
+  }
+  .consistency-date-label { font-size: 12px; }
+}
+/* --- Section Divider Style --- */
+.section-divider {
+  width: 100%;
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.15); /* สีขาวโปร่งแสง 15% */
+  border: none;
+  margin: 10px 0; /* ระยะห่าง บน-ล่าง ของเส้น */
+}
+
+/* ================= Trophy (Updated) ================= */
+.trophy-section {
+  padding: 20px 10px 0;
+}
+
+.trophy-card {
+  width: 100%;
+  background: #a9afbe;
+  border: clamp(4px, 1.5vw, 8px) solid #222142;
+  border-radius: 24px;
+  padding: clamp(15px, 4vw, 30px);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.trophy-image-wrap {
+  width: 100%;
+  max-width: 500px; /* คุมขนาดไม่ให้ใหญ่เกินไปในจอคอม */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* เพิ่มเงาจางๆ และพื้นหลังเตรียมไว้สำหรับรูปโปร่งใส */
+  background: rgba(34, 33, 66, 0.05); 
+  border-radius: 12px;
+  padding: 10px;
+}
+
+.trophy-image {
+  width: 80%; /* ปรับขนาดรูปให้มีช่องไฟรอบข้าง */
+  height: auto;
+  display: block;
+  object-fit: contain;
+  /* ใส่เงาให้รูปภาพดูมีมิติ (เหมาะมากกับรูปถ้วยรางวัลหรือเกียรติบัตร) */
+  filter: drop-shadow(0 10px 15px rgba(0,0,0,0.2));
+  transition: transform 0.3s ease;
+}
+
+.trophy-card:hover .trophy-image {
+  transform: scale(1.03); /* ลูกเล่นขยับเล็กน้อยเมื่อเอาเมาส์วาง */
+}
+
+.trophy-text {
+  text-align: center;
+  color: #1b1b2f;
+  /* ใช้ clamp เพื่อให้ขนาดตัวอักษรหดตามขนาดหน้าจออัตโนมัติ */
+  font-size: clamp(18px, 4vw, 28px);
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 0;
+  word-break: break-word;
+}
+
+/* ปรับระยะห่างตัวอักษรให้ดูเป็นทางการขึ้น */
+.trophy-text br {
+  display: block;
+  content: "";
+  margin-top: 5px;
+}
+/* --- Section Divider Style --- */
+.section-divider {
+  width: 100%;
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.15); /* สีขาวโปร่งแสง 15% */
+  border: none;
+  margin: 10px 0; /* ระยะห่าง บน-ล่าง ของเส้น */
+}
+
+
+/* ================= Achievements (Updated) ================= */
+.achievements-section {
+  padding: 20px 10px 0;
+}
+
+.achievements-card {
+  width: 100%;
+  background: #a9afbe;
+  border: clamp(4px, 1.5vw, 8px) solid #222142;
+  border-radius: 24px;
+  overflow: hidden;
+}
+
+.achievement-item {
+  display: flex;
+  align-items: center;
+  /* ใช้ flex-wrap เพื่อให้ข้อความลงไปอยู่ใต้รูปอัตโนมัติบนมือถือ */
+  flex-wrap: wrap; 
+  gap: clamp(20px, 5vw, 56px);
+  padding: clamp(20px, 6vw, 54px);
+  min-height: auto; /* ปรับจากคงที่เป็น auto เพื่อให้ขยายตามเนื้อหา */
+  justify-content: center; /* จัดให้อยู่กลางจอเมื่อตัดบรรทัด */
+}
+
+.achievement-image-wrap {
+  /* ปรับขนาดรูปให้ยืดหยุ่นตามหน้าจอ */
+  width: clamp(120px, 30vw, 280px);
+  height: clamp(120px, 30vw, 280px);
+  flex-shrink: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(34, 33, 66, 0.1); /* พื้นหลังจางๆ ระหว่างรอโหลดรูป */
+  border: 3px solid #314678;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+}
+
+.achievement-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.achievement-item:hover .achievement-image {
+  transform: scale(1.08); /* ลูกเล่นขยับรูปเมื่อเอาเมาส์วาง */
+}
+
+.achievement-text {
+  color: #000000;
+  /* ใช้ clamp เพื่อให้ขนาดฟอนต์หดตามขนาดหน้าจอ */
+  font-size: clamp(18px, 4vw, 32px);
+  font-weight: 600;
+  line-height: 1.3;
+  flex: 1; /* ให้ข้อความใช้พื้นที่ที่เหลือ */
+  min-width: 200px; /* ป้องกันข้อความบีบจนเกินไป */
+  text-align: left;
+}
+
+/* ปรับให้อยู่กึ่งกลางหน้าจอเมื่อแสดงผลบนมือถือ */
+@media (max-width: 600px) {
+  .achievement-item {
+    text-align: center;
+  }
+  .achievement-text {
+    text-align: center;
+  }
+}
+
+.achievement-divider {
+  width: 90%; /* ไม่ให้เส้นชนขอบเกินไปจะดูสวยกว่า */
+  height: 2px;
+  background: rgba(49, 70, 120, 0.3);
+  margin: 0 auto;
+}
+/* --- Section Divider Style --- */
+.section-divider {
+  width: 100%;
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.15); /* สีขาวโปร่งแสง 15% */
+  border: none;
+  margin: 10px 0; /* ระยะห่าง บน-ล่าง ของเส้น */
+}
+
+
+/* ================= Post (Updated to match Home Style) ================= */
+.post-section {
+  padding: 20px 10px 0;
+}
+
+.card {
+  background: #1f4068; /* เปลี่ยนสีพื้นหลังให้ตรงกับตัวอย่างแรก */
+  border-radius: 16px;
+  margin-bottom: 25px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* แก้ไขส่วนจัดวางหัวโพสต์ */
+.card-header {
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative; /* สำคัญเพื่อให้เมนู Action อ้างอิงตำแหน่งได้ */
+}
+
+.user-info {
+    display: flex;
+    align-items: center; /* จัดให้รูปและชื่ออยู่กึ่งกลางบรรทัดเดียวกัน */
+    gap: 12px; /* ระยะห่างระหว่างรูปกับชื่อ */
+}
+
+.user-avatar {
+  width: 40px; /* ปรับขนาดให้เล็กลงตามตัวอย่างแรก */
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #333;
+  border: none;
+}
+
+.username {
+  font-size: 15px; /* ขนาดฟอนต์ตามตัวอย่างแรก */
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.more-options {
+  color: #8a94b8;
+  font-size: 18px;
+}
+
+.post-img {
+  width: 100%;
+  aspect-ratio: 16 / 9; /* ปรับอัตราส่วนตามตัวอย่างแรก */
+  object-fit: cover;
+  display: block;
+}
+
+.card-footer-actions {
+  padding: 12px 16px 8px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-left-btns {
+  display: flex;
+  gap: 20px;
+}
+
+.footer-icon {
+  width: 24px;
+  height: 24px;
+  fill: #8a94b8; /* สีไอคอนตามตัวอย่างแรก */
+}
+
+.action-btn.active .heart-icon {
+  fill: #ff4b2b; /* สีแดงตอนกดไลก์ */
+}
+
+.image-counter {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  color: #8a94b8;
+}
+
+.post-caption {
+  font-size: 14px;
+  color: #e0e0e0;
+  padding: 0 16px 15px 16px;
+}
+/* Action Menu (Report) */
+/* แก้ไขตำแหน่งเมนู Action */
+.action-menu {
+    display: none; 
+    position: absolute; 
+    top: 50px; /* ขยับลงมาจากปุ่ม 3 จุด */
+    right: 16px;
+    background: #1f4068; 
+    border: 1px solid #e3a005; /* เส้นขอบสีทองตามรูป */
+    border-radius: 8px; 
+    padding: 12px; 
+    z-index: 1000; /* ให้แสดงทับส่วนเนื้อหาโพสต์ (รูปดำ) */
+    min-width: 160px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+}
+.action-title { color: #e3a005; font-size: 12px; font-weight: bold; margin-bottom: 8px; }
+.action-item { display: flex; align-items: center; gap: 8px; padding: 8px; border-radius: 5px; color: #8a94b8; cursor: pointer; }
+.action-item.selected { background: #ffffff; color: #e3a005; }
+
+.bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 70px; background: #1b1b2f; border-top: 1px solid rgba(255, 255, 255, 0.2); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
+.nav-item { color: #8a94b8; cursor: pointer; padding: 10px; }
+.nav-item.active { color: #ffffff; }
+.nav-icon { width: 28px; height: 28px; fill: currentColor; }
+
+/* BOTTOM NAV */
+.bottom-nav {
+    position: fixed; bottom: 0; left: 0; width: 100%; height: 70px;
+    background: #1b1b2f; border-top: 1px solid rgba(255, 255, 255, 0.5);
+    display: flex; justify-content: space-around; align-items: center; z-index: 1000;
+}
+.nav-item { color: #8a94b8; cursor: pointer; padding: 10px; }
+.nav-item.active { color: #ffffff; }
+.nav-icon { width: 28px; height: 28px; fill: currentColor; }
+
+/* ================= Comment Modal Style ================= */
+.comment-modal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.8);
+  z-index: 2000;
+}
+
+.modal-content {
+  position: absolute;
+  bottom: 0; width: 100%; height: 75%;
+  background: #162447;
+  border-radius: 20px 20px 0 0;
+  display: flex; flex-direction: column;
+}
+
+.modal-header {
+  padding: 15px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  text-align: center;
+}
+
+.close-btn {
+  position: absolute; right: 20px; top: 15px;
+  font-size: 24px; cursor: pointer; color: white;
+}
+
+.comment-list { flex: 1; overflow-y: auto; padding: 15px; }
+
+.comment-input-area {
+  padding: 15px;
+  background: #1b1b2f;
+  display: flex; gap: 10px;
+}
+
+#commentInput {
+  flex: 1; background: #162447;
+  border: 1px solid #333;
+  border-radius: 20px;
+  padding: 8px 15px; color: white;
+  outline: none;
+}
+
+.send-btn {
+  background: transparent; border: none;
+  color: #4c6ef5; font-weight: bold; cursor: pointer;
+}
+
+
+.bottom-nav {
+    position: fixed; bottom: 0; left: 0; width: 100%; height: 70px;
+    background: #1b1b2f; border-top: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex; justify-content: space-around; align-items: center; z-index: 1000;
+}
+.nav-item { color: #8a94b8; cursor: pointer; padding: 10px; }
+.nav-item.active { color: #ffffff; }
+.nav-icon { width: 28px; height: 28px; fill: currentColor; }
