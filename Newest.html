@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pentagram</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="Newest.css">
+</head>
+<body>
+
+    <div class="mobile-container">
+        <header class="header">
+            <img src="LOGO.png" class="logo" alt="PENTAGRAM">
+        </header>
+
+        <div class="divider"></div>
+
+        <main class="feed">
+            <div class="sort-header" onclick="toggleSortMenu()">
+                <h2 class="section-title" id="currentSortTitle">Newest</h2>
+                <i class="fas fa-caret-up" id="sortArrow"></i>
+            </div>
+            
+            <div class="post-area" id="postArea">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="user-info">
+                            <div class="user-avatar">
+                                <svg viewBox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="50" fill="#A0A0A0"/><circle cx="50" cy="40" r="18" fill="#D0D0D0"/><path d="M50 62C30 62 18 75 18 85C18 90 22 92 50 92C78 92 82 90 82 85C82 75 70 62 50 62Z" fill="#D0D0D0"/></svg>
+                            </div>
+                            <span class="username">Username</span>
+                        </div>
+                        <div class="more-options" onclick="toggleActionMenu(this)">•••</div>
+                        
+                        <div class="action-menu" id="actionMenu">
+                            <p class="action-title">ACTION</p>
+                            <div class="action-item" onclick="selectReport(this)">
+                                <svg viewBox="0 0 24 24" width="16"><path d="M14.4 6L14 4H5v17h2v-7h5.6l.4 2h7V6h-5.6z" fill="currentColor"/></svg>
+                                <span>Report Post</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="post-content">
+                        <img src="post-placeholder.jpg" class="post-img">
+                    </div>
+
+                    <div class="card-footer-actions">
+                        <div class="footer-left-btns">
+                            <div class="action-btn" onclick="toggleLike(this)">
+                                <svg viewBox="0 0 24 24" class="footer-icon heart-icon"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                                <span class="count"></span>
+                            </div>
+                            <div class="action-btn" onclick="openComments()">
+                                <svg viewBox="0 0 24 24" class="footer-icon"><path d="M20 4H4C2.9 4 2 4.9 2 6V16C2 17.1 2.9 18 4 18H14L18 22V18H20C21.1 18 22 17.1 22 16V6C22 4.9 21.1 4 20 4Z"/></svg>
+                                <span class="count"></span>
+                            </div>
+                        </div>
+                        <div class="image-counter" id="imgCounter">1/5</div>
+                    </div>
+
+                    <div class="card-caption-area">
+                        <div class="post-caption" id="captionText"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <nav class="bottom-nav">
+            <div class="nav-item active" onclick="setActive(this)"><svg viewBox="0 0 24 24" class="nav-icon"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg></div>
+            <div class="nav-item" onclick="setActive(this)"><svg viewBox="0 0 24 24" class="nav-icon"><circle cx="12" cy="12" r="11" fill="currentColor"/><path d="M12 7l1.45 4.47H18.2l-3.72 2.7 1.42 4.36L12 15.83l-3.9 2.7 1.42-4.36-3.72-2.7h4.75L12 7z" fill="#1b1b2f"/></svg></div>
+            <div class="nav-item" onclick="setActive(this)"><svg viewBox="0 0 24 24" class="nav-icon"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg></div>
+            <div class="nav-item" onclick="setActive(this)"><svg viewBox="0 0 24 24" class="nav-icon"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></div>
+            <div class="nav-item" onclick="setActive(this)"><svg viewBox="0 0 24 24" class="nav-icon"><circle cx="12" cy="12" r="11" fill="currentColor"/><circle cx="12" cy="9.5" r="3.5" fill="#1b1b2f"/><path d="M12 14c-4 0-5.5 2.5-5.5 4.5v.5h11v-.5c0-2-1.5-4.5-5.5-4.5z" fill="#1b1b2f"/></svg></div>
+        </nav>
+    </div>
+
+    <div id="sortModal" class="sort-modal" onclick="closeSortMenu(event)">
+        <div class="sort-modal-content">
+            <div class="drag-handle"></div>
+            <h3 class="sort-title">Sort by</h3>
+            <div class="modal-divider"></div>
+            
+            <div class="sort-options-list">
+                <div class="sort-option-item" onclick="selectSortOption('Newest to Oldest', 'newest')">
+                    <span>Newest to Oldest</span>
+                    <div class="radio-circle" id="radio-newest"></div>
+                </div>
+                <div class="sort-option-item" onclick="selectSortOption('Oldest to Newest', 'oldest')">
+                    <span>Oldest to Newest</span>
+                    <div class="radio-circle" id="radio-oldest"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="commentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Comments</h3>
+                <span class="close-btn" onclick="closeComments()">&times;</span>
+            </div>
+            <div class="comment-list" id="commentList">
+                <p class="empty-msg">No comments yet...</p>
+            </div>
+            <div class="comment-input-area">
+                <input type="text" placeholder="Write a comment..." id="commentInput">
+                <button onclick="sendComment()">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="Newest.js"></script>
+</body>
+</html>
