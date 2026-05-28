@@ -1,0 +1,495 @@
+/* =========================================
+   fav-post-style.css (Grid Feeds Style)
+   ========================================= */
+
+.feed-page-override {
+    padding-top: 90px !important;
+}
+
+@media (min-width: 1024px) {
+    .feed-page-override {
+        padding-top: 0 !important;
+    }
+}
+
+.fav-page-container {
+    width: 100%;
+    max-width: 1200px; /* ขยายให้กว้างพอสำหรับ 4 คอลัมน์ */
+    margin: 0 auto;
+    padding: 0 10px 20px;
+}
+
+/* ปุ่ม Sort */
+.sort-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    width: fit-content;
+    color: var(--text-main, #fff);
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: 0.2s;
+}
+
+.sort-header:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+#sortArrow {
+    transition: transform 0.3s ease;
+}
+
+#sortArrow.rotate {
+    transform: rotate(180deg);
+}
+
+/* 🔥 โครงสร้าง Grid สำหรับกล่องโพสต์ (Responsive) 🔥 */
+.fav-posts-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* มือถือ: 2 กล่อง/แถว */
+    gap: 12px; 
+}
+
+@media (min-width: 768px) {
+    .fav-posts-grid {
+        grid-template-columns: repeat(3, 1fr); /* แท็บเล็ต: 3 กล่อง/แถว */
+        gap: 16px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .feed-page-override {
+        padding-top: 30px !important; /* 🟢 เปลี่ยนจาก 0 เป็น 90px */
+    }
+}
+
+/* =========================================
+   หน้าตากล่องโพสต์ (ย่อส่วนจาก Feeds)
+   ========================================= */
+.fav-post-card {
+   background: var(--color-bg-card);
+   border:
+        1px solid
+        rgba(255,255,255,.06);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    color: #fff;
+    overflow: hidden;
+}
+
+.fav-post-header {
+    display: flex;
+    align-items: center;
+    padding: 8px 10px;
+    gap: 8px;
+}
+
+.fav-post-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.fav-post-username {
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.fav-post-image {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.fav-post-actions {
+    display: flex;
+    padding: 10px;
+    gap: 12px;
+    font-size: 1.1rem;
+}
+
+.fav-post-actions i {
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.fav-post-actions i:hover {
+    opacity: 0.7;
+}
+
+.fav-post-content {
+    padding: 0 10px 12px;
+    font-size: 0.85rem;
+}
+
+.fav-post-likes {
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.fav-post-caption {
+    line-height: 1.4;
+    margin-bottom: 6px;
+    /* ตัดคำถ้ายาวเกิน 2 บรรทัดให้ดูเป็นระเบียบในกล่องเล็ก */
+    display: -webkit-box;
+    /*-webkit-line-clamp: 2; */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.fav-post-date {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+}
+
+/* =========================================
+   ลิ้นชักเลือกตัวกรอง Sort
+   ========================================= */
+.sort-modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 3000;
+    align-items: flex-end;
+}
+
+.sort-modal-content {
+    width: 100%;
+    max-width: 500px;
+    background: #121212;
+    margin: 0 auto;
+    border-radius: 20px 20px 0 0;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: none;
+    padding-bottom: calc(20px + env(safe-area-inset-bottom));
+    animation: slideUpAnimation 0.25s ease-out;
+}
+
+@keyframes slideUpAnimation {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+}
+
+.drag-handle {
+    width: 42px; height: 5px; background: rgba(255,255,255,.15);
+    border-radius: 999px; margin: 16px auto 12px;
+}
+
+.sort-title {
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--text-main, #fff);
+}
+
+.modal-divider {
+    width: 100%; height: 1px; background: rgba(255, 255, 255, 0.08);
+}
+
+.sort-option-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--text-main, #fff);
+}
+
+.radio-circle {
+    width: 20px; height: 20px;
+    border: 2px solid rgba(255,255,255,.2);
+    border-radius: 50%;
+    position: relative;
+}
+
+.radio-circle.active { border-color: #4ea1ff; }
+.radio-circle.active::after {
+    content: ""; position: absolute;
+    top: 3px; left: 3px; width: 10px; height: 10px;
+    background: #4ea1ff; border-radius: 50%;
+}
+/* POST DETAIL MODAL */
+.post-detail-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 4000;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.post-detail-modal.active { display: flex; }
+
+.post-detail-container {
+    width: 100%;
+    max-width: 620px; /* ขนาดเท่าหน้า Feed */
+    position: relative;
+}
+
+.close-detail-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 2rem;
+    cursor: pointer;
+    z-index: 4001;
+}
+
+/* ดึง Style พื้นฐานจากหน้า Feed มาใช้เพื่อให้หน้าตาเหมือนกัน */
+/* (คุณสามารถก็อปปี้ .post-card, .post-header, .post-media จาก feeds-style.css มาใส่ตรงนี้ได้เลย) */
+.post-card {
+    background: var(--color-bg-card);
+
+    border:
+        1px solid
+        rgba(255,255,255,.06); overflow: hidden; }
+.post-header { display: flex; align-items: center; padding: 12px; gap: 10px; }
+.post-avatar { width: 36px; height: 36px; border-radius: 50%; }
+.post-media { position: relative; width: 100%; background: #000; min-height: 300px; }
+.post-footer { padding: 12px; }
+.post-actions { display: flex; gap: 15px; font-size: 1.3rem; margin-bottom: 8px; }
+.post-actions i { cursor: pointer; }
+.post-actions i.fa-heart.active { color: #ff3040; }
+/* ======================================================
+   คอมเมนต์แบบ Bottom Sheet (ขนาดเท่าหน้า Feed)
+====================================================== */
+
+/* ตัวคลุมดำด้านหลัง (Overlay) */
+.comment-modal {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7); /* พื้นหลังดำโปร่งแสง */
+    z-index: 5000;
+    display: none; /* ซ่อนไว้ก่อน */
+    align-items: flex-end; /* จัดให้เนื้อหาอยู่ล่างสุด */
+    justify-content: center; /* จัดให้อยู่กึ่งกลางแนวนอนสำหรับหน้าจอใหญ่ */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.comment-modal.active {
+    display: flex;
+    opacity: 1;
+}
+
+/* กล่องคอมเมนต์ (ตัว Bottom Sheet) */
+.comment-box {
+    width: 100%;
+    max-width: 620px;
+
+    height: 78vh;
+
+    margin: 0 auto;
+
+    background: #121212;
+
+    border-radius: 28px 28px 0 0;
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+
+}
+
+.comment-modal.active .comment-box {
+    transform: translateY(0); /* เลื่อนขึ้นมาเมื่อเปิด */
+}
+
+/* ส่วนหัว (Header) ของคอมเมนต์ */
+.comment-header {
+    position: relative;
+
+    padding: 16px;
+
+    text-align: center;
+
+    border-bottom:
+        1px solid
+        rgba(255,255,255,.08);
+}
+
+
+.drag-line {
+    width: 42px;
+    height: 5px;
+
+    border-radius: 999px;
+
+    background:
+        rgba(255,255,255,.15);
+
+    margin: 0 auto 12px;
+}
+.comment-header h3 {
+    margin: 0;
+    color: #fff;
+    font-size: 1.05rem;
+    font-weight: 600;
+}
+
+/* ปุ่มปิด (X) */
+.comment-header button {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 1.3rem;
+    cursor: pointer;
+    padding: 5px;
+    opacity: 0.8;
+}
+
+.comment-header button:hover { opacity: 1; }
+
+/* รายการคอมเมนต์ (ส่วนที่เลื่อนได้) */
+.comment-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 15px;
+}
+
+/* สไตล์แต่ละคอมเมนต์ */
+.comment-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.comment-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.comment-user-info { flex: 1; }
+
+.comment-username {
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 2px;
+    display: block;
+}
+
+.comment-text {
+    color: #eee;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+/* ช่องพิมพ์คอมเมนต์ด้านล่าง */
+.comment-input-wrapper {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    gap: 12px;
+    background-color: #1a1a1a;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.my-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.comment-input-wrapper input {
+    flex: 1;
+    background-color: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #fff;
+    border-radius: 20px;
+    padding: 10px 15px;
+    font-size: 0.9rem;
+}
+
+.comment-input-wrapper input:focus {
+    outline: none;
+    border-color: #4ea1ff;
+}
+
+/* ปุ่ม Post */
+.comment-input-wrapper button {
+    background: none;
+    border: none;
+    color: #4ea1ff; /* สีฟ้า */
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0 5px;
+}
+
+.comment-input-wrapper button:disabled {
+    color: #555; /* สีเทาเมื่อพิมพ์ไม่ได้ */
+    cursor: default;
+}
+/* ======================================================
+   แก้ไขส่วนช่องพิมพ์คอมเมนต์ด้านล่างให้สวยงาม (อิงจากหน้า Feed)
+====================================================== */
+.comment-input-wrapper { 
+    display: flex; 
+    align-items: center; /* จัดให้อยู่กึ่งกลางแนวตั้ง */
+    padding: 15px; 
+    gap: 12px; 
+    border-top: 1px solid rgba(255,255,255,0.1); 
+    background: #171717;
+}
+
+.my-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.comment-input-wrapper input { 
+    flex: 1; 
+    height: 40px;
+    background: rgba(255, 255, 255, 0.05); 
+    border: none; 
+    border-radius: 20px; 
+    padding: 0 15px; 
+    color: #fff; 
+    outline: none;
+}
+
+.comment-input-wrapper button {
+    background: transparent;
+    border: none;
+    color: #4ea1ff;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0 5px;
+}
+
+.comment-input-wrapper button:hover {
+    color: #3b82f6;
+}

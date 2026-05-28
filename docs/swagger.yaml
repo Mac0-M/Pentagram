@@ -1,0 +1,26 @@
+openapi: 3.0.0
+info:
+  title: Pentagram API Documentation
+  version: 1.0.0
+  description: ระบบ API สำหรับจัดการโพสต์และคะแนนผู้เล่น
+paths:
+  /api/posts:
+    get:
+      summary: ดึงรายการโพสต์ทั้งหมด
+      responses:
+        '200':
+          description: รายการโพสต์สำเร็จ
+    post:
+      summary: สร้างโพสต์ใหม่ (รองรับรูป/วิดีโอ)
+  /api/posts/{id}/like:
+    put:
+      summary: กด Like หรือ Unlike
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+  /api/get-friend-scores:
+    get:
+      summary: ดึงคะแนน Leaderboard จากไฟล์ scores.json

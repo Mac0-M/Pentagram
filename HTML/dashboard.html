@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pentagram - Leaderboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    
+    <link rel="stylesheet" href="../CSS/global-style.css">
+    <link rel="stylesheet" href="../CSS/header-style.css">
+    <link rel="stylesheet" href="../CSS/dashboard-style.css"> </head>
+<body>
+    <div id="navigation-placeholder"></div>
+
+    <div class="main-wrapper">
+        <main class="main-content feed-page-override dashboard-page-override">
+            
+            <div class="dashboard-container">
+                <div class="leaderboard-card box-card">
+                    <div class="table-header">
+                        <span class="col-place">RANK</span>
+                        <span class="col-name">PLAYER</span>
+                        <span class="col-score">SCORE</span>
+                        <span class="col-ranking">TIER</span>
+                    </div>
+
+                    <div id="leaderboardList" class="leaderboard-list">
+                        </div>
+
+                    <div class="pagination">
+                        <button class="nav-arrow" id="prevBtn"><i class="fas fa-chevron-left"></i></button>
+                        <div class="page-numbers">
+                            </div>
+                        <button class="nav-arrow" id="nextBtn"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="../JS/header.js"></script>
+    <script src="../JS/dashboard.js"></script>
+</body>
+</html>

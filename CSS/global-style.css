@@ -1,0 +1,116 @@
+/* =========================================
+   global.css
+   ========================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
+
+:root {
+    /* ตัวแปรสีต่างๆ เหมือนเดิม... */
+    --color-bg-page: #162447;
+    --color-bg-card: rgba(31, 64, 104, 0.4); 
+    --color-bg-nav: rgba(27, 27, 47, 0.35);  
+    --color-win: #40afff;
+    --color-lose: #ff4060;
+    --color-text-gold: #fabc60;
+    --card-border: rgba(255, 255, 255, 0.08);
+    --text-main: #ffffff;
+    --text-dim: #8a94b8; 
+    --transition-smooth: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    /* 🔥 ลบ font-family ตรงนี้ออก! 🔥 */
+}
+
+body {
+    /* 🔥 ย้ายฟอนต์มาไว้ที่ body แทน เพื่อไม่ให้ไปทับ FontAwesome 🔥 */
+    font-family: 'Montserrat', sans-serif;
+    
+    background: radial-gradient(circle at top right, #1f305e 0%, var(--color-bg-page) 70%);
+    background-attachment: fixed; 
+    background-color: var(--color-bg-page);
+    color: var(--text-main);
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+
+/* โค้ดด้านล่างอื่นๆ ปล่อยไว้เหมือนเดิมครับ... */
+
+/* =========================================
+   Custom Scrollbar (แถบเลื่อนสไตล์ Gaming)
+   ========================================= */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(250, 188, 96, 0.3);
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-gold); /* ตอนเอาเมาส์ชี้แถบเลื่อนจะสว่างเป็นสีทอง */
+}
+
+/* =========================================
+   Responsive Layout (Mobile First)
+   ========================================= */
+.app-container {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+}
+
+.main-wrapper {
+    flex: 1;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    padding: 20px 15px;
+    padding-bottom: 120px; /* เว้นที่ด้านล่างเผื่อเอฟเฟกต์เรืองแสงของ Nav มือถือ */
+}
+
+/* โครงสร้างคอลัมน์บนมือถือให้เรียงซ้อนกัน */
+.left-column, .right-column {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+/* =========================================
+   💻 สำหรับหน้าจอ Desktop
+   ========================================= */
+@media (min-width: 1024px) {
+    body {
+        padding-top: 80px;
+    }
+
+    .main-content {
+        flex-direction: row; /* เปลี่ยนเป็นคอลัมน์ซ้าย-ขวา */
+        align-items: flex-start;
+        padding: 50px 40px;
+        max-width: 90%;
+        margin: 0 auto;
+        padding-bottom: 60px; /* หน้าคอมไม่มี Nav ล่าง เลยลดระยะห่างลง */
+    }
+    
+    .left-column {
+        width: 360px; /* ล็อกความกว้างคอลัมน์ซ้าย */
+        flex-shrink: 0;
+    }
+    
+    .right-column {
+        flex: 1; /* ให้คอลัมน์ขวายืดเต็มพื้นที่ที่เหลือ */
+        min-width: 0;
+    }
+}
