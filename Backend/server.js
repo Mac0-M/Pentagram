@@ -39,6 +39,8 @@ const {
     buildOtpAuthUri
 } = require('./utils/totp');
 
+const setupStillAlive = require('./utils/stillAlive');
+
 // BUG FIX 1: trim() กัน whitespace ใน .env ที่ทำให้ key ขึ้น 401
 const RIOT_API_KEY = (process.env.RIOT_API_KEY || '').trim();
 const RIOT_REGION = (process.env.RIOT_REGION || 'sea').trim();
@@ -56,11 +58,8 @@ app.use(cors({ origin: "*" }));
 app.use(express.json());
 app.use('/api', gameStatsRouter);
 
-// Ping route for keeping server alive (Render free tier sleep prevention)
-app.get('/ping', (req, res) => {
-    console.log(`[Ping] Received ping request at ${new Date().toISOString()}`);
-    res.status(200).send('pong');
-});
+// Initialize keep-alive ping service for Render sleep prevention
+setupStillAlive(app, PORT);
 
 // Setup Swagger UI
 const swaggerDocument = YAML.load(path.join(__dirname, 'swagger.yaml'));
@@ -1447,26 +1446,6 @@ function openBrowser(url) {
     });
 }
 
-function startPingInterval() {
-    const PING_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
-    
-    // Check if Render's external URL is available, otherwise fallback to localhost
-    const renderExternalUrl = process.env.RENDER_EXTERNAL_URL;
-    const targetUrl = renderExternalUrl ? `${renderExternalUrl.replace(/\/$/, '')}/ping` : `http://localhost:${PORT}/ping`;
-    
-    console.log(`[Ping Service] Initializing keep-alive ping for target: ${targetUrl} every 5 minutes`);
-    
-    setInterval(async () => {
-        try {
-            console.log(`[Ping Service] Sending keep-alive request to: ${targetUrl}`);
-            const response = await axios.get(targetUrl);
-            console.log(`[Ping Service] Keep-alive success! Status: ${response.status} - Response: "${response.data}"`);
-        } catch (err) {
-            console.error(`[Ping Service] Keep-alive error for URL ${targetUrl}: ${err.message}`);
-        }
-    }, PING_INTERVAL_MS);
-}
-
 async function startServer() {
     await mongoose.connect(process.env.MONGO_URI);
     console.log('DB Connected');
@@ -1481,9 +1460,6 @@ async function startServer() {
         setTimeout(() => {
             openBrowser(`http://localhost:${PORT}/HTML/index.html`);
         }, 1000);
-
-        // Start Keep-Alive Ping Service
-        startPingInterval();
     });
 }
 
