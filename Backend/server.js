@@ -1544,7 +1544,27 @@ async function startServer() {
     });
 }
 
-startServer().catch((err) => {
-    console.error('Server failed to start:', err);
-    process.exit(1);
-});
+// Export the app for Vercel Serverless Functions
+module.exports = app;
+
+if (!process.env.VERCEL) {
+    startServer().catch((err) => {
+        console.error('Server failed to start:', err);
+        process.exit(1);
+    });
+} else {
+    // In Vercel, connect to DB immediately when module is loaded
+    mongoose.connect(process.env.MONGO_URI)
+        .then(async () => {
+            console.log('Serverless DB Connected');
+            try {
+                await cleanupLegacyIndexes();
+                await keepOnlyUserAndProfileCollections();
+            } catch (err) {
+                console.warn('Post-connection cleanup failed:', err.message);
+            }
+        })
+        .catch((err) => {
+            console.error('Serverless DB connection failed:', err);
+        });
+}

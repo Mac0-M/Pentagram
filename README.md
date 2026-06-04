@@ -143,6 +143,25 @@ npx http-server -p 8080
 เปิดเว็บบราวเซอร์แล้วเข้าไปยังลิงก์:
 👉 **`http://localhost:8080/HTML/index.html`**
 
+### 5. การติดตั้งบน Vercel (Cloud Deployment)
+โปรเจกต์นี้ได้รับการปรับปรุงให้รองรับการ Deploy ทั้งระบบหน้าบ้าน (Frontend Static Content) และหลังบ้าน (Backend Serverless Functions) บนคลาวด์ Vercel พร้อมกันผ่านไฟล์ [vercel.json](file:///c:/Users/visar/Downloads/lab%20all/Pentagram/Pentagram/vercel.json) ที่อยู่ในโฟลเดอร์หลัก
+
+#### ขั้นตอนการ Deploy:
+1. **ติดตั้ง Vercel CLI (หากยังไม่มี)**:
+   ```bash
+   npm install -g vercel
+   ```
+2. **สั่งคำสั่ง Deploy ในโฟลเดอร์หลักของโปรเจกต์**:
+   ```bash
+   vercel
+   ```
+3. **ตั้งค่า Environment Variables ในหน้า Vercel Dashboard**:
+   เมื่อสร้างโปรเจกต์สำเร็จ ให้เปิดแท็บ **Settings > Environment Variables** ในแดชบอร์ด Vercel แล้วกำหนดตัวแปรดังนี้:
+   * `MONGO_URI`: ลิงก์สำหรับต่อฐานข้อมูล (แนะนำให้ใช้ MongoDB Atlas เนื่องจาก Vercel ไม่สามารถใช้ Local Host ได้)
+   * `RIOT_API_KEY`: คีย์สำหรับดึงข้อมูล Riot Games API
+   * `RIOT_REGION`: ภูมิภาคสำหรับค้นหาไอดีเกม (เช่น `sea`)
+   * `JWT_SECRET`: คีย์ลับที่ใช้เข้ารหัส JWT Token
+
 ---
 
 ## 🛠️ การแก้ไขปัญหาที่พบบ่อย (Troubleshooting)
