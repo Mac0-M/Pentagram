@@ -1,0 +1,541 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>profile</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="../CSS/global-style.css" />
+    <link rel="stylesheet" href="../CSS/header-style.css" />
+    <link rel="stylesheet" href="../CSS/profile-style.css" />
+    <link rel="stylesheet" href="../CSS/feeds-style.css" />
+    <link rel="stylesheet" href="../CSS/fav-post-style.css" />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+  </head>
+
+  <body class="profile-page">
+    <div id="navigation-placeholder"></div>
+    <div class="main-wrapper">
+      <main class="main-content">
+        <div class="profile-toolbar">
+          <div id="profile-actions" class="profile-actions">
+            <button
+              id="settings-btn"
+              type="button"
+              class="profile-action-btn"
+              title="Profile settings"
+              hidden
+            >
+              <i class="fas fa-gear"></i>
+              <span>Settings</span>
+            </button>
+            <button
+              id="share-profile-btn"
+              type="button"
+              class="profile-action-btn"
+              title="Share profile"
+            >
+              <i class="fas fa-share-nodes"></i>
+              <span>Share</span>
+            </button>
+            <button
+              id="logout-btn"
+              type="button"
+              class="profile-action-btn"
+              title="Log out"
+              hidden
+            >
+              <i class="fas fa-right-from-bracket"></i>
+              <span>Log out</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="profile-columns">
+          <div class="left-column">
+            <section class="profile-summary box-card">
+              <div class="user-avatar" id="profileAvatarContainer">
+                <svg
+                  id="defaultAvatarSvg"
+                  viewBox="0 0 100 100"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <circle cx="50" cy="50" r="50" fill="#9B9B9B" />
+                  <circle cx="50" cy="42" r="18" fill="#D9D9D0" />
+                  <path
+                    d="M50 65C32 65 20 77 20 85C20 88 23 90 50 90C77 90 80 88 80 85C80 77 68 65 50 65Z"
+                    fill="#D9D9D0"
+                  />
+                </svg>
+                <img
+                  id="profileAvatar"
+                  src=""
+                  alt="Profile Avatar"
+                  style="display: none"
+                  onerror="
+                    this.style.display = 'none';
+                    document.getElementById('defaultAvatarSvg').style.display =
+                      'block';
+                  "
+                />
+
+                <label
+                  for="avatarUploadInput"
+                  class="avatar-upload-overlay"
+                  id="avatarUploadOverlay"
+                  aria-hidden="true"
+                  hidden
+                >
+                  <i class="fas fa-camera"></i>
+                </label>
+                <input
+                  type="file"
+                  id="avatarUploadInput"
+                  accept="image/png, image/jpeg, image/gif"
+                  hidden
+                />
+              </div>
+              <div class="profile-info">
+                <h1 id="username" class="profile-username">-</h1>
+                <div id="verifiedBadge" class="verified-row">
+                  <i class="fas fa-shield-alt verified-icon"></i>
+                  <span>Game ID Not Verified</span>
+                </div>
+                <div class="game-id-list">
+                  <div class="game-id-item">
+                    <span class="game-name">LOL</span
+                    ><span id="lolId" class="game-id-val">-</span>
+                  </div>
+                  <div class="game-id-item">
+                    <span class="game-name">DOTA2</span
+                    ><span id="dotaId" class="game-id-val">-</span>
+                  </div>
+                </div>
+
+                <div id="game-verification-card" class="game-verification-card">
+                  <h3 class="game-verification-title">
+                    Connect and verify your game accounts
+                  </h3>
+                  <p class="game-verification-copy">
+                    Verify either game successfully and the account will be
+                    marked Verified immediately.
+                  </p>
+
+                  <div class="game-verification-field">
+                    <label for="lolIdInput"
+                      >League of Legends ID (Riot ID)</label
+                    >
+                    <input
+                      type="text"
+                      id="lolIdInput"
+                      placeholder="Example: Faker#KR1"
+                    />
+                  </div>
+
+                  <div class="game-verification-field">
+                    <label for="dotaIdInput"
+                      >DOTA 2 ID (numeric OpenDota Account ID)</label
+                    >
+                    <input
+                      type="text"
+                      id="dotaIdInput"
+                      placeholder="Example: 70388657"
+                    />
+                  </div>
+
+                  <button
+                    id="btnVerifyGames"
+                    type="button"
+                    class="game-verification-submit"
+                  >
+                    Submit verification
+                  </button>
+                </div>
+              </div>
+            </section>
+
+            <section class="cross-game-status-section box-card">
+              <h2 class="section-title">Cross Game Status</h2>
+              <div class="cross-game-card">
+                <div class="moba-score-container">
+                  <div class="moba-score-ring">
+                    <div class="moba-score-content">
+                      <div id="mobaScoreValue" class="moba-score-value">-</div>
+                      <div class="moba-score-label">MOBA Skill Score</div>
+                      <div id="mobaRankBadge" class="moba-rank-badge">-</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="status-stats">
+                  <div class="status-item">
+                    <div id="rankSkillValue" class="status-value">-</div>
+                    <div class="status-name">Rank<br />Skill</div>
+                  </div>
+                  <div class="status-divider"></div>
+                  <div class="status-item">
+                    <div id="winEfficiencyValue" class="status-value">-</div>
+                    <div class="status-name">Win<br />Efficiency</div>
+                  </div>
+                  <div class="status-divider"></div>
+                  <div class="status-item">
+                    <div id="combatPerformanceValue" class="status-value">
+                      -
+                    </div>
+                    <div class="status-name">Combat<br />Performance</div>
+                  </div>
+                  <div class="status-divider"></div>
+                  <div class="status-item">
+                    <div id="economySkillValue" class="status-value">-</div>
+                    <div class="status-name">Economy<br />Skill</div>
+                  </div>
+                </div>
+              </div>
+              <a class="see-details-btn" href="./gamedetail_dota2.html"
+                >See Details</a
+              >
+            </section>
+          </div>
+
+          <div class="right-column">
+            <section class="skill-tags-section box-card">
+              <h2 class="section-title">Skill Tags and Attributes</h2>
+              <div class="skill-tags-layout">
+                <div class="selected-skills-panel">
+                  <div class="skill-panel-header">
+                    <div>
+                      <h3 class="skill-panel-title">Selected Skills</h3>
+                      <p class="skill-panel-copy">
+                        Tap chips below to toggle them on or off.
+                      </p>
+                    </div>
+                    <button
+                      id="saveSkillsBtn"
+                      type="button"
+                      class="skill-save-btn"
+                    >
+                      Save Skills
+                    </button>
+                  </div>
+
+                  <div id="selectedSkillTags" class="selected-skill-tags"></div>
+                </div>
+
+                <div class="skill-selector-panel">
+                  <div class="skill-panel-header">
+                    <div>
+                      <h3 class="skill-panel-title">Skill Selector</h3>
+                      <p class="skill-panel-copy">
+                        Grouped by category for quick selection.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div
+                    id="skillSelectorGroups"
+                    class="skill-selector-groups"
+                  ></div>
+                </div>
+              </div>
+            </section>
+
+            <section class="consistency-section box-card">
+              <h2 class="section-title">Consistency</h2>
+              <div class="calendar-container">
+                <div class="calendar-header">
+                  <button id="prevMonth" class="calendar-nav-btn">
+                    <i class="fas fa-chevron-left"></i>
+                  </button>
+                  <h4 id="calendar-month-title">Month Year</h4>
+                  <button id="nextMonth" class="calendar-nav-btn">
+                    <i class="fas fa-chevron-right"></i>
+                  </button>
+                </div>
+
+                <div class="calendar-grid calendar-weekdays">
+                  <div>Sun</div>
+                  <div>Mon</div>
+                  <div>Tue</div>
+                  <div>Wed</div>
+                  <div>Thu</div>
+                  <div>Fri</div>
+                  <div>Sat</div>
+                </div>
+
+                <div id="calendar-cells" class="calendar-grid"></div>
+              </div>
+            </section>
+
+            <section class="trophy-section box-card">
+              <div class="section-title-row">
+                <h2 class="section-title">Trophy</h2>
+                <button
+                  id="trophyManageBtn"
+                  type="button"
+                  class="collection-manage-btn"
+                >
+                  Edit
+                </button>
+              </div>
+              <div class="collection-note">
+                Collection items are managed from the card view.
+              </div>
+              <div id="trophyGrid" class="trophy-grid"></div>
+              <div class="collection-footer">
+                <button
+                  id="addTrophyBtn"
+                  type="button"
+                  class="collection-add-btn"
+                  hidden
+                >
+                  Add Trophy
+                </button>
+              </div>
+            </section>
+
+            <section class="achievements-section box-card">
+              <div class="section-title-row">
+                <h2 class="section-title">Achievements</h2>
+                <button
+                  id="achievementManageBtn"
+                  type="button"
+                  class="collection-manage-btn"
+                >
+                  Edit
+                </button>
+              </div>
+              <div class="collection-note">
+                Tap a card to edit it, or use the empty state to add a new one.
+              </div>
+              <div id="achievementsCard" class="achievements-card"></div>
+              <div class="collection-footer">
+                <button
+                  id="addAchievementBtn"
+                  type="button"
+                  class="collection-add-btn"
+                  hidden
+                >
+                  Add Achievement
+                </button>
+              </div>
+            </section>
+
+            <section class="post-section box-card">
+              <h2 class="section-title">Your Post</h2>
+              <div
+                id="profilePostsContainer"
+                class="profile-posts-container"
+                style="
+                  display: flex;
+                  flex-direction: column;
+                  gap: 25px;
+                  margin-top: 15px;
+                  width: 100%;
+                  max-width: 600px;
+                  margin-left: auto;
+                  margin-right: auto;
+                "
+              >
+                <div
+                  class="profile-posts-loading"
+                  style="color: #888; text-align: center; padding: 20px"
+                >
+                  Loading posts...
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <div class="media-modal" id="mediaModal" aria-hidden="true">
+            <div class="media-modal-backdrop" data-close-media-modal></div>
+            <div
+              class="media-modal-content"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="mediaModalTitle"
+            >
+              <button
+                class="media-modal-close"
+                type="button"
+                aria-label="Close"
+                data-close-media-modal
+              >
+                &times;
+              </button>
+              <h3 id="mediaModalTitle" class="media-modal-title">Add Media</h3>
+              <p id="mediaModalCopy" class="media-modal-copy">
+                Upload an image and add a caption for your profile.
+              </p>
+
+              <div class="media-modal-tabs">
+                <button
+                  type="button"
+                  class="media-modal-tab active"
+                  data-media-kind="trophy"
+                >
+                  Trophy
+                </button>
+                <button
+                  type="button"
+                  class="media-modal-tab"
+                  data-media-kind="achievement"
+                >
+                  Achievement
+                </button>
+              </div>
+
+              <form id="mediaForm" class="media-form">
+                <input
+                  type="hidden"
+                  id="mediaKindInput"
+                  name="kind"
+                  value="trophy"
+                />
+                <div class="media-field">
+                  <label for="mediaImageInput">Image</label>
+                  <input
+                    type="file"
+                    id="mediaImageInput"
+                    name="image"
+                    accept="image/png, image/jpeg, image/gif, image/webp"
+                    required
+                  />
+                </div>
+                <div class="media-field">
+                  <label for="mediaTextInput">Caption</label>
+                  <textarea
+                    id="mediaTextInput"
+                    name="text"
+                    rows="4"
+                    maxlength="240"
+                    placeholder="Write a short description"
+                    required
+                  ></textarea>
+                </div>
+                <button
+                  id="mediaSubmitBtn"
+                  type="submit"
+                  class="media-submit-btn"
+                >
+                  Save
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <div
+            class="game-detail-modal"
+            id="gameDetailModal"
+            aria-hidden="true"
+          >
+            <div
+              class="game-detail-modal-backdrop"
+              data-close-game-detail
+            ></div>
+            <div
+              class="game-detail-modal-content"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="gameDetailModalTitle"
+            >
+              <button
+                class="game-detail-modal-close"
+                type="button"
+                aria-label="Close"
+                data-close-game-detail
+              >
+                &times;
+              </button>
+              <h3 id="gameDetailModalTitle" class="game-detail-modal-title">
+                Choose game details
+              </h3>
+              <p class="game-detail-modal-copy">
+                Open the detailed profile view for the game you want to inspect.
+              </p>
+              <div class="game-detail-modal-actions">
+                <a
+                  href="gamedetail_lol.html"
+                  class="game-detail-option game-detail-option-lol"
+                >
+                  <span class="game-detail-option-label">LoL</span>
+                  <span class="game-detail-option-subtitle"
+                    >Open detailed stats</span
+                  >
+                </a>
+                <a
+                  href="gamedetail_dota2.html"
+                  class="game-detail-option game-detail-option-dota2"
+                >
+                  <span class="game-detail-option-label">Dota 2</span>
+                  <span class="game-detail-option-subtitle"
+                    >Open detailed stats</span
+                  >
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- POST DETAIL MODAL -->
+    <div class="post-detail-modal" id="postDetailModal">
+      <div class="post-detail-container">
+        <button class="close-detail-btn" onclick="closePostDetail()">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+        <div id="postDetailContent"></div>
+      </div>
+    </div>
+
+    <!-- COMMENT MODAL -->
+    <div class="comment-modal" id="commentModal">
+      <div class="comment-box">
+        <div class="comment-header">
+          <div class="drag-line"></div>
+          <h3>Comments</h3>
+          <button onclick="closeComments()">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <div class="comment-list" id="commentList"></div>
+        <div class="comment-input-wrapper">
+          <img src="../assets/logo.png" class="my-avatar" />
+          <input type="text" id="commentInput" placeholder="Add a comment..." />
+          <button onclick="addComment()">Post</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="../JS/components/header.js"></script>
+    <script>
+      // Immediately show/hide owner-only buttons based on PAGE_CONTEXT
+      (function() {
+        var ctx = window.PentagramPageContext || {};
+        var isOwner = Boolean(ctx.isOwnerProfile);
+        var settingsBtn = document.getElementById('settings-btn');
+        var logoutBtn = document.getElementById('logout-btn');
+        if (settingsBtn) { settingsBtn.hidden = !isOwner; settingsBtn.style.display = isOwner ? '' : 'none'; }
+        if (logoutBtn) { logoutBtn.hidden = !isOwner; logoutBtn.style.display = isOwner ? '' : 'none'; }
+      })();
+    </script>
+    <script src="../JS/pages/profile/shared_consistency.js"></script>
+    <script src="../JS/pages/profile/shared_posts.js"></script>
+    <script src="../JS/pages/profile/shared_media.js"></script>
+    <script src="../JS/pages/profile/shared_skills.js"></script>
+    <script src="../JS/pages/profile/owner_ui.js"></script>
+    <script src="../JS/core/api_client.js"></script>
+    <script src="../JS/pages/set-profile.js"></script>
+  </body>
+</html>

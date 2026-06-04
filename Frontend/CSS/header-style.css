@@ -1,0 +1,156 @@
+/* =========================================
+   header.css (Ultra Glassmorphism & Gaming Feel)
+   ========================================= */
+
+/* =========================================
+   Top Header (Desktop & Mobile)
+   ========================================= */
+.main-header {
+    /* ใช้สีเดิมแตกลายให้โปร่งใส 35% เพื่อให้เห็นฉากหลังเบลอๆ */
+    background: rgba(27, 27, 47, 0.35); 
+    backdrop-filter: blur(24px); /* เพิ่มความเบลอให้ดูเป็นกระจกหนาๆ */
+    -webkit-backdrop-filter: blur(24px);
+    
+    padding: 0 20px;
+    height: 75px; 
+    display: flex;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 2000;
+    
+    /* สร้างมิติขอบกระจก (สะท้อนแสงด้านล่าง) */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: inset 0 -1px 0 rgba(250, 188, 96, 0.1), /* แสงทองสะท้อนขอบใน */
+                0 10px 30px rgba(0, 0, 0, 0.6); /* เงาดำสนิทดรอปลงมา */
+}
+
+.header-left { 
+    display: flex; 
+    align-items: center; 
+    flex-grow: 1; /* ดันเมนูไปขวา */
+}
+
+/* โลโก้ */
+.logo { 
+    height: 40px; 
+    transition: transform 0.4s (0.175, 0.885, 0.32, 1.275);
+    cursor: pointer;
+}
+.logo:hover {
+    transform: scale(1.1) rotate(-2deg); /* ขยับแบบไดนามิกนิดๆ */
+}
+
+.header-right { 
+    display: none !important; /* ปิด Setting ทิ้งตามรีเควส */
+}
+
+/* =========================================
+   Desktop Nav (เมนูบนคอม)
+   ========================================= */
+.desktop-nav { display: none; }
+
+@media (min-width: 1024px) {
+    .main-header { padding: 0 50px; height: 80px; }
+    
+    .desktop-nav { 
+        display: block; 
+        margin-left: auto; /* ดันชิดขวา */
+    }
+    
+    .desktop-nav ul { 
+        list-style: none; 
+        display: flex; 
+        gap: 8px; /* ระยะห่างปุ่ม */
+    }
+    
+    .desktop-nav a { 
+        color: var(--text-dim); 
+        text-decoration: none; 
+        font-size: 0.9rem; 
+        font-weight: 700; 
+        text-transform: uppercase; 
+        letter-spacing: 2px; /* ถ่างตัวอักษรให้ดูล้ำ */
+        padding: 10px 24px;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid transparent;
+    }
+    
+    /* เอฟเฟกต์ Hover แบบ Gaming UI */
+    .desktop-nav a:hover, .desktop-nav a.active { 
+        color: var(--color-text-gold); 
+        background: rgba(250, 188, 96, 0.05); /* พื้นหลังทองจางๆ */
+        border-color: rgba(250, 188, 96, 0.3); /* กรอบเรืองแสง */
+        text-shadow: 0 0 15px rgba(250, 188, 96, 0.8); /* ตัวหนังสือเรืองแสง */
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    /* จุดไฟเล็กๆ ด้านบนตอน Active */
+    .desktop-nav a.active::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 50%;
+        transform: translateX(-50%);
+        width: 20px; height: 3px;
+        background: var(--color-text-gold);
+        border-radius: 0 0 4px 4px;
+        box-shadow: 0 2px 10px var(--color-text-gold);
+    }
+}
+
+/* =========================================
+   Bottom Nav (มือถือ) - ใสเป็นแก้วและล้ำสุดๆ
+   ========================================= */
+.mobile-bottom-nav {
+    position: fixed;
+    bottom: 0; left: 0; width: 100%;
+    height: 75px;
+    
+    /* สีใสกริ๊งแบบกระจก */
+    background: rgba(27, 27, 47, 0.4);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    
+    /* ขอบกระจกด้านบน */
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05),
+                0 -10px 30px rgba(0, 0, 0, 0.6);
+                
+    z-index: 2000;
+    padding-bottom: env(safe-area-inset-bottom); 
+}
+
+.nav-item { 
+    color: #636b8c; /* สีไอคอนตอนปกติ (เทาอมน้ำเงิน) */
+    font-size: 1.6rem; /* ไอคอนใหญ่ขึ้นนิดนึง */
+    padding: 10px 15px;
+    border-radius: 16px;
+    text-decoration: none;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* เอฟเฟกต์ตอนชี้หรือเลือกเมนู (Active) */
+.nav-item:hover, .nav-item.active { 
+    color: var(--color-text-gold); 
+    transform: translateY(-8px); /* เด้งลอยขึ้นมาอย่างชัดเจน */
+    filter: drop-shadow(0 5px 10px rgba(250, 188, 96, 0.4)); /* เรืองแสง */
+}
+
+@media (min-width: 1024px) {
+    .mobile-bottom-nav { display: none !important; }
+}

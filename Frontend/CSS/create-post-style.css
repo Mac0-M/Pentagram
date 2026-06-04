@@ -1,0 +1,273 @@
+/* =========================================
+   create-post.css
+   ========================================= */
+
+/* ดันเนื้อหาหลบ Header เฉพาะมือถือ และจัดกึ่งกลางหน้าจอ */
+.feed-page-override {
+  padding-top: 108px !important;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* มือถือให้ชิดขอบบน */
+  min-height: 100vh;
+  padding-bottom: calc(150px + env(safe-area-inset-bottom));
+}
+
+@media (min-width: 1024px) {
+  .feed-page-override {
+    padding-top: 0 !important;
+    padding-bottom: 0;
+    align-items: center; /* บนจอคอมพิวเตอร์ให้อยู่กึ่งกลางจอพอดี */
+  }
+
+  .feed-page-override.main-content {
+    width: 100%;
+    max-width: none !important;
+    margin: 0;
+    padding: 0;
+    align-items: center;
+  }
+
+  .create-post-container {
+    width: 1200px;
+    max-width: 1200px;
+    height: 700px;
+    max-height: 700px;
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  }
+
+  .media-upload-container {
+    flex: 1 1 auto;
+    min-height: 0;
+    aspect-ratio: auto;
+  }
+
+  .caption-container {
+    flex: 0 0 170px;
+  }
+}
+
+.create-post-container {
+  background: var(--color-bg-card);
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+
+  /* 🔥 ล็อกความกว้างตรงนี้ ให้พอดีจอและไม่ใหญ่เกินไปบนคอม 🔥 */
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+/* Action Bar */
+.action-bar {
+  height: 60px;
+  background: rgba(0, 0, 0, 0.18);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.action-title {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #fff;
+  margin: 0;
+}
+
+.btn-text {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+  font-family: "Montserrat", sans-serif;
+}
+
+.cancel-btn {
+  color: var(--text-dim);
+}
+.cancel-btn:hover {
+  color: #fff;
+}
+
+.btn-primary {
+  color: var(--color-win);
+}
+.btn-primary:hover {
+  color: #66c2ff;
+  text-shadow: 0 0 10px rgba(64, 175, 255, 0.4);
+}
+
+.btn-text:active {
+  transform: scale(0.92);
+  opacity: 0.7;
+}
+
+/* Media Section */
+.media-upload-container {
+  width: 100%;
+  /* 🔥 บังคับสัดส่วน 1:1 แบบ IG เสมอ ไม่ว่ารูปจะมาทรงไหนกล่องนี้จะไม่ยืดตามรูป 🔥 */
+  aspect-ratio: 1 / 1;
+  background: #000;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+#upload-placeholder {
+  text-align: center;
+  color: var(--text-dim);
+  cursor: pointer;
+  padding: 20px;
+  transition: 0.3s;
+  z-index: 5;
+}
+
+#upload-placeholder:hover {
+  color: #fff;
+  transform: scale(1.05);
+}
+#upload-placeholder i {
+  font-size: 50px;
+  margin-bottom: 15px;
+  color: var(--color-text-gold);
+}
+
+/* Carousel Preview */
+.preview-carousel {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none; /* Firefox */
+}
+
+.preview-carousel::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
+.preview-slide {
+  flex: 0 0 100%;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  scroll-snap-align: center;
+  background: #000;
+}
+
+/* 🔥 ตัดรูปให้พอดีกรอบ 1:1 เสมอ (เหมือนตอนลงไอจี) ไม่ให้ดันกล่องพัง 🔥 */
+.preview-slide img,
+.preview-slide video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.remove-media-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: 0.2s;
+}
+
+.remove-media-btn:hover {
+  background: var(--color-lose);
+}
+
+.add-more-btn {
+  position: absolute;
+  bottom: 15px;
+  right: 15px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(5px);
+  border: 1px solid var(--card-border);
+  color: #fff;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: 0.2s;
+}
+.add-more-btn:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+/* Caption Section */
+.caption-container {
+  display: flex;
+  padding: 20px;
+  gap: 15px;
+  background: rgba(0, 0, 0, 0.14);
+  align-items: flex-start;
+}
+
+.avatar {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--card-border);
+}
+
+.textarea-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+#captionText {
+  width: 100%;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1rem;
+  font-family: "Montserrat", sans-serif;
+  outline: none;
+  resize: none;
+  height: 100px;
+  line-height: 1.5;
+}
+
+#captionText::placeholder {
+  color: var(--text-dim);
+}
+
+.char-counter {
+  text-align: right;
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  margin-top: 5px;
+  font-weight: 500;
+}
+
+.char-counter.limit-reached {
+  color: var(--color-lose);
+}

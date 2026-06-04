@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pentagram - Liked Posts</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+
+    <link rel="stylesheet" href="../CSS/global-style.css" />
+    <link rel="stylesheet" href="../CSS/header-style.css" />
+    <link rel="stylesheet" href="../CSS/feeds-style.css" />
+    <link rel="stylesheet" href="../CSS/fav-post-style.css" />
+  </head>
+  <body>
+    <div id="navigation-placeholder"></div>
+
+    <div class="main-wrapper">
+      <main class="main-content feed-page-override">
+        <div class="fav-page-container">
+          <div class="sort-header" onclick="toggleSortMenu()">
+            <span id="currentSortTitle">Newest to Oldest</span>
+            <i class="fas fa-caret-down" id="sortArrow"></i>
+          </div>
+
+          <div class="fav-posts-grid" id="favGridArea"></div>
+        </div>
+      </main>
+    </div>
+
+    <div
+      id="sortModal"
+      class="sort-modal-overlay"
+      onclick="closeSortMenu(event)"
+    >
+      <div class="sort-modal-content">
+        <div class="drag-handle"></div>
+        <h3 class="sort-title">Sort by Liked Date</h3>
+        <div class="modal-divider"></div>
+
+        <div class="sort-options-list">
+          <div
+            class="sort-option-item"
+            onclick="selectSortOption('Newest to Oldest', 'newest')"
+          >
+            <span>Newest to Oldest</span>
+            <div class="radio-circle" id="radio-newest"></div>
+          </div>
+          <div
+            class="sort-option-item"
+            onclick="selectSortOption('Oldest to Newest', 'oldest')"
+          >
+            <span>Oldest to Newest</span>
+            <div class="radio-circle" id="radio-oldest"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- POST DETAIL MODAL -->
+    <div class="post-detail-modal" id="postDetailModal">
+      <div class="post-detail-container">
+        <button class="close-detail-btn" onclick="closePostDetail()">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+        <div id="postDetailContent"></div>
+      </div>
+    </div>
+
+    <!-- COMMENT MODAL -->
+    <div class="comment-modal" id="commentModal">
+      <div class="comment-box">
+        <div class="comment-header">
+          <div class="drag-line"></div>
+          <h3>Comments</h3>
+          <button onclick="closeComments()">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <div class="comment-list" id="commentList"></div>
+        <div class="comment-input-wrapper">
+          <img src="../assets/logo.png" class="my-avatar" />
+          <input type="text" id="commentInput" placeholder="Add a comment..." />
+          <button onclick="addComment()">Post</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="../JS/components/header.js"></script>
+    <script src="../JS/pages/fav-post.js"></script>
+  </body>
+</html>

@@ -1,0 +1,1038 @@
+openapi: 3.0.0
+info:
+  title: Pentagram API
+  description: |
+    Documentation of the dual architecture used by Pentagram:
+
+    1. **Express Backend (HTTP REST API)** — endpoints exposed by the Express server on `http://localhost:3000`.
+       These cover authentication, profile management, media management, game verification, and match sync.
+
+    2. **Web Worker Message Bus** — `postMessage`-based commands processed by `moba-score-worker.js`
+       and `consistency-worker.js`. Since Web Workers do not use HTTP, these are documented as virtual
+       paths under `/worker/*` to describe the message `type` and `payload` shapes exchanged via
+       `worker.postMessage({ type, payload })`.
+
+    ### Authentication
+    Most profile-mutating endpoints require a valid JWT sent as `Authorization: Bearer <token>`.
+    The token is obtained from `POST /api/auth/login-step2`.
+
+    ### Rank Tiers (MOBA Score scale 0–1000)
+    | Score range | Label |
+    |---|---|
+    | 0–150 | Iron Vanguard |
+    | 151–300 | Bronze Striker |
+    | 301–450 | Silver Tactician |
+    | 451–600 | Gold Challenger |
+    | 601–750 | Platinum Elite |
+    | 751–900 | Diamond Master |
+    | 901–1000 | Mythic Immortal |
+
+  version: 1.0.0
+  contact:
+    name: Pentagram Dev Team
+
+servers:
+  - url: http://localhost:3000
+    description: Local development server
+
+tags:
+  - name: Express Backend Proxy
+    description: Real HTTP proxy endpoints provided by the Express server to bypass CORS restrictions.
+  - name: Auth
+    description: Registration, two-step login, and JWT issuance
+  - name: Public Profile
+    description: Read-only profile data accessible without authentication
+  - name: Profile — Game Verification
+    description: Link and verify Riot (LoL) and OpenDota (Dota 2) game accounts
+  - name: Profile — Skills
+    description: Manage player skill tags
+  - name: Profile — Media
+    description: Upload, edit, and delete trophy / achievement media items
+  - name: Profile — Avatar
+    description: Upload a profile avatar image
+  - name: Profile — Match Sync
+    description: Fetch live match stats from Riot and OpenDota APIs and recalculate MOBA scores
+  - name: Worker — MOBA Score
+    description: |
+      `moba-score-worker.js` — Background thread that computes the weighted cross-game MOBA Skill Score.
+      Communicate via `worker.postMessage({ type, payload })`.
+  - name: Worker — Consistency Calendar
+    description: |
+      `consistency-worker.js` — Background thread that builds the monthly activity calendar grid.
+      Communicate via `worker.postMessage({ type, payload })`.
+
+# ─────────────────────────────────────────────────────────────────────────────
+# PATHS
+# ─────────────────────────────────────────────────────────────────────────────
+paths:
+
+  /api/riot/{server}/{path}:
+    get:
+      tags:
+        - Express Backend Proxy
+      summary: Proxy GET request to Riot Games API
+      description: |
+        Proxies incoming requests to Riot's server cluster, automatically attaching the secret `X-Riot-Token` from the backend's environment variables to prevent exposing the token in front-end client code.
+      parameters:
+        - name: server
+          in: path
+          required: true
+          description: Target Riot API server domain (e.g., `asia.api.riotgames.com` or `sg2.api.riotgames.com`).
+          schema:
+            type: string
+            example: "asia.api.riotgames.com"
+        - name: path
+          in: path
+          required: true
+          description: Subpath of the Riot API endpoint (e.g., `riot/account/v1/accounts/by-riot-id/PhNumbawan/NEWB`).
+          schema:
+            type: string
+            example: "riot/account/v1/accounts/by-riot-id/PhNumbawan/NEWB"
+      responses:
+        '200':
+          description: Successful proxy response returning the requested Riot API payload.
+          content:
+            application/json:
+              schema:
+                type: object
+        '403':
+          description: Forbidden - The backend does not have a valid `RIOT_API_KEY` configured.
+        '429':
+          description: Too Many Requests - The target Riot API server has rate-limited the key.
+        '500':
+          description: Internal Server Error.
+
+  /api/dota2/{path}:
+    get:
+      tags:
+        - Express Backend Proxy
+      summary: Proxy GET request to OpenDota API
+      description: |
+        Proxies incoming requests to the OpenDota public API.
+      parameters:
+        - name: path
+          in: path
+          required: true
+          description: Subpath of the OpenDota API endpoint (e.g., `players/321580662` or `players/321580662/matches`).
+          schema:
+            type: string
+            example: "players/321580662"
+      responses:
+        '200':
+          description: Successful proxy response returning the requested OpenDota API payload.
+          content:
+            application/json:
+              schema:
+                type: object
+        '500':
+          description: Internal Server Error.
+
+  # ── AUTH ──────────────────────────────────────────────────────────────────
+
+  /api/auth/register:
+    post:
+      tags: [Auth]
+      summary: Register a new user account
+      description: |
+        Creates a new `User` document (hashed password) and a matching `Profile` document.
+        Generates a TOTP secret and returns a QR code data-URL for Google Authenticator setup.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, password]
+              properties:
+                username:
+                  type: string
+                  example: TestPlayer
+                password:
+                  type: string
+                  format: password
+                  example: password123
+      responses:
+        "200":
+          description: Account created successfully. QR code included.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Registered
+                  qrCode:
+                    type: string
+                    description: Base64 data-URL of the TOTP QR code (otpauth://totp/…)
+                    example: "data:image/png;base64,iVBORw0KGgo..."
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/auth/login-step1:
+    post:
+      tags: [Auth]
+      summary: "Step 1 — Verify username and password"
+      description: |
+        Validates credentials. On success returns a short-lived `challengeToken` (JWT, 5 min)
+        that must be passed to Step 2. The 2FA OTP prompt should be shown to the user at this point.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, password]
+              properties:
+                username:
+                  type: string
+                  example: TestPlayer
+                password:
+                  type: string
+                  format: password
+                  example: password123
+      responses:
+        "200":
+          description: Credentials valid. Proceed to Step 2.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  require2FA:
+                    type: boolean
+                    example: true
+                  username:
+                    type: string
+                    example: TestPlayer
+                  challengeToken:
+                    type: string
+                    description: Short-lived JWT to be forwarded in login-step2
+        "401":
+          description: Invalid username or password
+
+  /api/auth/login-step2:
+    post:
+      tags: [Auth]
+      summary: "Step 2 — Verify TOTP code and issue session JWT"
+      description: |
+        Validates the 6-digit TOTP against the stored MFA secret (±1 window step).
+        On success issues a 12-hour session JWT.
+        The field `token2FA` is the canonical name; aliases `token`, `code`, and `otp` are also accepted.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token2FA]
+              properties:
+                username:
+                  type: string
+                  description: Required if `challengeToken` is omitted
+                  example: TestPlayer
+                challengeToken:
+                  type: string
+                  description: Short-lived JWT from Step 1 (used to resolve username when `username` field is absent)
+                token2FA:
+                  type: string
+                  description: 6-digit TOTP from Google Authenticator (aliases — token, code, otp)
+                  example: "123456"
+      responses:
+        "200":
+          description: 2FA verified. Session token issued.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: 12-hour JWT for authenticated requests
+        "400":
+          description: Missing 2FA token or username
+        "401":
+          description: Invalid challenge token
+        "403":
+          description: Wrong TOTP code
+
+  # ── PUBLIC PROFILE ─────────────────────────────────────────────────────────
+
+  /api/public-profile/{username}:
+    get:
+      tags: [Public Profile]
+      summary: Get full public profile by username
+      description: |
+        Returns the complete read-only profile snapshot used by `share-profile.html`.
+        Includes cross-game stats, activity calendar data, skill tags, and media collections.
+        `activityData` is a plain object keyed by ISO date strings (`YYYY-MM-DD`).
+      parameters:
+        - $ref: "#/components/parameters/usernameInPath"
+      responses:
+        "200":
+          description: Profile found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicProfile"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  # ── PROFILE — GAME VERIFICATION ────────────────────────────────────────────
+
+  /api/profile/verify-games:
+    post:
+      tags: [Profile — Game Verification]
+      summary: Link and verify Riot (LoL) and / or OpenDota (Dota 2) game IDs
+      description: |
+        Resolves the supplied IDs against upstream APIs (Riot Account v1 for LoL, OpenDota Players for Dota 2).
+        - A Riot ID must use the format `GameName#TagLine` (e.g. `Faker#KR1`).
+        - A Dota 2 ID is the numeric OpenDota account ID (e.g. `70388657`).
+        - At least one ID must verify successfully for the profile to gain `verified: true`.
+        - Duplicate IDs already claimed by another user are rejected with 400.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username]
+              properties:
+                username:
+                  type: string
+                  example: TestPlayer
+                lolId:
+                  type: string
+                  example: Faker#KR1
+                dotaId:
+                  type: string
+                  example: "70388657"
+      responses:
+        "200":
+          description: At least one game ID verified successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  verified:
+                    type: boolean
+                  lolId:
+                    type: string
+                  dotaId:
+                    type: string
+                  warnings:
+                    type: array
+                    items:
+                      type: string
+                    description: Non-fatal verification errors for IDs that failed
+                  message:
+                    type: string
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  # ── PROFILE — SKILLS ───────────────────────────────────────────────────────
+
+  /api/profile/update-skills:
+    put:
+      tags: [Profile — Skills]
+      summary: Save skill tag selections for a profile
+      description: |
+        Replaces the profile's `skillTags` array with the supplied list.
+        Tags are trimmed and empty entries are removed. Upserts if profile does not exist.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, skillTags]
+              properties:
+                username:
+                  type: string
+                  example: TestPlayer
+                skillTags:
+                  type: array
+                  items:
+                    type: string
+                  example: ["Mid Laner", "Support", "Initiator"]
+      responses:
+        "200":
+          description: Skills saved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  skillTags:
+                    type: array
+                    items:
+                      type: string
+                  message:
+                    type: string
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  # ── PROFILE — MEDIA ────────────────────────────────────────────────────────
+
+  /api/profile/media/{username}:
+    get:
+      tags: [Profile — Media]
+      summary: Get all trophies and achievements for a profile
+      parameters:
+        - $ref: "#/components/parameters/usernameInPath"
+      responses:
+        "200":
+          description: Media collections returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                  trophies:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MediaItem"
+                  achievements:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MediaItem"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/profile/media:
+    post:
+      tags: [Profile — Media]
+      summary: Add a new trophy or achievement
+      description: |
+        Uploads an image file and saves a media item to the profile.
+        Maximum 10 items per kind (`trophy` or `achievement`).
+        Caption must be 100 words or fewer.
+        Accepted image types: PNG, JPEG, GIF, WEBP.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [username, kind, image, text]
+              properties:
+                username:
+                  type: string
+                  example: TestPlayer
+                kind:
+                  type: string
+                  enum: [trophy, achievement]
+                  example: trophy
+                image:
+                  type: string
+                  format: binary
+                  description: Image file (PNG / JPEG / GIF / WEBP)
+                text:
+                  type: string
+                  description: Caption — max 100 words
+                  example: Won the regional championship
+      responses:
+        "201":
+          description: Media item created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  trophies:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MediaItem"
+                  achievements:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MediaItem"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/profile/media/{username}/{index}:
+    put:
+      tags: [Profile — Media]
+      summary: Edit an existing trophy or achievement by index
+      description: |
+        Updates the caption and optionally the image of a media item at position `index` (0-based).
+        If no new image file is uploaded, the existing image URL is preserved.
+      parameters:
+        - $ref: "#/components/parameters/usernameInPath"
+        - $ref: "#/components/parameters/mediaIndex"
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [kind, text]
+              properties:
+                kind:
+                  type: string
+                  enum: [trophy, achievement]
+                text:
+                  type: string
+                  description: Updated caption — max 100 words
+                image:
+                  type: string
+                  format: binary
+                  description: Replacement image (optional)
+      responses:
+        "200":
+          description: Media item updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  trophies:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MediaItem"
+                  achievements:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MediaItem"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+    delete:
+      tags: [Profile — Media]
+      summary: Delete a trophy or achievement by index
+      parameters:
+        - $ref: "#/components/parameters/usernameInPath"
+        - $ref: "#/components/parameters/mediaIndex"
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                kind:
+                  type: string
+                  enum: [trophy, achievement]
+                  description: Can also be supplied as query param `?kind=`
+                  default: trophy
+      responses:
+        "200":
+          description: Media item deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  trophies:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MediaItem"
+                  achievements:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MediaItem"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  # ── PROFILE — AVATAR ──────────────────────────────────────────────────────
+
+  /api/profile/upload-avatar:
+    post:
+      tags: [Profile — Avatar]
+      summary: Upload or replace a profile avatar
+      description: |
+        Saves the uploaded image to `uploads/` on disk and stores the resulting URL
+        in `Profile.avatar`. Accepted types are determined by the `multer` filter
+        (any image type the browser submits via `<input type="file" accept="image/*">`).
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [username, avatar]
+              properties:
+                username:
+                  type: string
+                  example: TestPlayer
+                avatar:
+                  type: string
+                  format: binary
+                  description: Avatar image file
+      responses:
+        "200":
+          description: Avatar uploaded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Avatar uploaded successfully
+                  avatarUrl:
+                    type: string
+                    example: "http://localhost:3000/uploads/TestPlayer-1234567890-123456789.png"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  # ── PROFILE — MATCH SYNC ──────────────────────────────────────────────────
+
+  /api/profile/sync-matches:
+    post:
+      tags: [Profile — Match Sync]
+      summary: Fetch live stats from Riot & OpenDota and recalculate MOBA scores
+      description: |
+        Pulls real match data from upstream APIs for the linked `lolId` and `dotaId`,
+        then computes weighted cross-game statistics and persists them to MongoDB.
+
+        **Computation pipeline:**
+        1. **Dota 2** — fetches player rank tier, win/loss record, and the last 20 recent matches
+           from OpenDota to derive `rankSkill`, `winEff`, `combat`, and `economy` (each 0–100).
+        2. **League of Legends** — fetches PUUID via Riot Account v1 (`asia` region),
+           then ranked league data (`th` platform) and the last 5 match details to derive
+           equivalent 0–100 per-category scores.
+        3. **Weighted combination** — weights `w_d = min(1, dotaMatches/100)`,
+           `w_l = min(1, lolMatches/100)`, then computes the weighted average.
+        4. Each category score is multiplied by 10 → scale of 0–1000.
+           `mobaScore = round(0.25·rankSkill + 0.25·winEff + 0.25·combat + 0.25·economy) * 10`.
+        5. Saves `mobaScore`, `rankTierLabel`, `rankSkill`, `winEfficiency`,
+           `combatPerformance`, `economySkill`, and `activityData` to the Profile document.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username]
+              properties:
+                username:
+                  type: string
+                  example: TestPlayer
+      responses:
+        "200":
+          description: Stats synced and recalculated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Matches and real MOBA statistics synchronized successfully
+                  activityData:
+                    type: object
+                    description: Plain object keyed by ISO date string (`YYYY-MM-DD`) with match count values
+                    additionalProperties:
+                      type: integer
+                    example:
+                      "2025-05-01": 3
+                      "2025-05-02": 1
+                  mobaScore:
+                    type: integer
+                    minimum: 0
+                    maximum: 1000
+                    example: 427
+                  rankTierLabel:
+                    $ref: "#/components/schemas/RankTierLabel"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  # ── WEB WORKER — MOBA SCORE ───────────────────────────────────────────────
+
+  /worker/moba-score/COMPUTE_CROSS_GAME_STATUS:
+    post:
+      tags: [Worker — MOBA Score]
+      summary: "postMessage type: COMPUTE_CROSS_GAME_STATUS"
+      description: |
+        **This is not an HTTP endpoint.** Send via:
+        ```js
+        mobaWorker.postMessage({
+          type: 'COMPUTE_CROSS_GAME_STATUS',
+          payload: { dotaRaw, lolRaw }
+        });
+        ```
+        The worker computes the same weighted formula as the server-side sync,
+        but operates entirely in the browser on already-fetched raw stats objects.
+        Used by `profile.html` to update the UI optimistically before the server persists.
+
+        Listen for the response:
+        ```js
+        mobaWorker.addEventListener('message', (e) => {
+          if (e.data.type === 'MOBA_SCORE_COMPUTED') {
+            const { crossGameStatus } = e.data;
+          }
+        });
+        ```
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [type, payload]
+              properties:
+                type:
+                  type: string
+                  enum: [COMPUTE_CROSS_GAME_STATUS]
+                payload:
+                  type: object
+                  properties:
+                    dotaRaw:
+                      $ref: "#/components/schemas/RawGameStats"
+                    lolRaw:
+                      $ref: "#/components/schemas/RawGameStats"
+      responses:
+        "200":
+          description: |
+            Worker replies with `postMessage({ type: 'MOBA_SCORE_COMPUTED', crossGameStatus })`.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    enum: [MOBA_SCORE_COMPUTED]
+                  crossGameStatus:
+                    $ref: "#/components/schemas/CrossGameStatus"
+
+  # ── WEB WORKER — CONSISTENCY CALENDAR ────────────────────────────────────
+
+  /worker/consistency/CALCULATE_MONTH_CALENDAR:
+    post:
+      tags: [Worker — Consistency Calendar]
+      summary: "postMessage type: CALCULATE_MONTH_CALENDAR"
+      description: |
+        **This is not an HTTP endpoint.** Send via:
+        ```js
+        calendarWorker.postMessage({
+          type: 'CALCULATE_MONTH_CALENDAR',
+          payload: { activityData, year, month }
+        });
+        ```
+        Generates a 7-column CSS grid of calendar day cells with color class levels
+        based on that day's match count. Empty cells are padded to fill complete weeks.
+
+        Color classes:
+        | Class | Condition |
+        |---|---|
+        | `level-empty` | Day outside the current month |
+        | `level-0` | No matches (`count = 0`) |
+        | `level-1` | 1–2 matches |
+        | `level-2` | 3–4 matches |
+        | `level-3` | 5+ matches |
+
+        Listen for the response:
+        ```js
+        calendarWorker.addEventListener('message', (e) => {
+          if (e.data.type === 'CALENDAR_RENDER_READY') {
+            const { calendarDays } = e.data;
+          }
+        });
+        ```
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [type, payload]
+              properties:
+                type:
+                  type: string
+                  enum: [CALCULATE_MONTH_CALENDAR]
+                payload:
+                  type: object
+                  required: [activityData, year, month]
+                  properties:
+                    activityData:
+                      type: object
+                      description: Plain object keyed by `YYYY-MM-DD` with integer match counts
+                      additionalProperties:
+                        type: integer
+                      example:
+                        "2025-05-14": 2
+                        "2025-05-20": 5
+                    year:
+                      type: integer
+                      example: 2025
+                    month:
+                      type: integer
+                      description: Zero-based month index (0 = January … 11 = December)
+                      minimum: 0
+                      maximum: 11
+                      example: 4
+      responses:
+        "200":
+          description: |
+            Worker replies with `postMessage({ type: 'CALENDAR_RENDER_READY', calendarDays })`.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    enum: [CALENDAR_RENDER_READY]
+                  calendarDays:
+                    type: array
+                    description: Ordered list of calendar cell descriptors — length is always a multiple of 7
+                    items:
+                      $ref: "#/components/schemas/CalendarDay"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# COMPONENTS
+# ─────────────────────────────────────────────────────────────────────────────
+components:
+
+  parameters:
+    usernameInPath:
+      name: username
+      in: path
+      required: true
+      schema:
+        type: string
+      example: TestPlayer
+
+    mediaIndex:
+      name: index
+      in: path
+      required: true
+      description: Zero-based index of the media item in the profile's `trophies` or `achievements` array
+      schema:
+        type: integer
+        minimum: 0
+      example: 0
+
+  responses:
+    BadRequest:
+      description: Bad request — missing or invalid input
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+
+    InternalError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+
+  schemas:
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          example: Profile not found
+
+    RankTierLabel:
+      type: string
+      enum:
+        - Iron Vanguard
+        - Bronze Striker
+        - Silver Tactician
+        - Gold Challenger
+        - Platinum Elite
+        - Diamond Master
+        - Mythic Immortal
+      example: Gold Challenger
+
+    MediaItem:
+      type: object
+      properties:
+        image:
+          type: string
+          description: URL to the uploaded image file
+          example: "http://localhost:3000/uploads/TestPlayer-1234567890-123456789.png"
+        text:
+          type: string
+          description: Caption — max 100 words
+          example: Won the regional championship
+        createdAt:
+          type: string
+          format: date-time
+
+    CrossGameStatus:
+      type: object
+      description: Weighted cross-game performance metrics (all scores 0–1000)
+      properties:
+        mobaScore:
+          type: integer
+          minimum: 0
+          maximum: 1000
+          example: 427
+        rank:
+          $ref: "#/components/schemas/RankTierLabel"
+        rankSkill:
+          type: integer
+          minimum: 0
+          maximum: 1000
+          example: 550
+        winEfficiency:
+          type: integer
+          minimum: 0
+          maximum: 1000
+          example: 480
+        combatPerformance:
+          type: integer
+          minimum: 0
+          maximum: 1000
+          example: 390
+        economySkill:
+          type: integer
+          minimum: 0
+          maximum: 1000
+          example: 290
+
+    PublicProfile:
+      type: object
+      properties:
+        username:
+          type: string
+          example: TestPlayer
+        avatar:
+          type: string
+          description: URL to avatar image, or empty string if none
+          example: "http://localhost:3000/uploads/TestPlayer-avatar.png"
+        verified:
+          type: boolean
+          example: true
+        lolId:
+          type: string
+          example: Faker#KR1
+        dotaId:
+          type: string
+          example: "70388657"
+        skillTags:
+          type: array
+          items:
+            type: string
+          example: ["Mid Laner", "Initiator"]
+        trophies:
+          type: array
+          items:
+            $ref: "#/components/schemas/MediaItem"
+        achievements:
+          type: array
+          items:
+            $ref: "#/components/schemas/MediaItem"
+        activityData:
+          type: object
+          description: Match count per calendar day; keyed by `YYYY-MM-DD`
+          additionalProperties:
+            type: integer
+          example:
+            "2025-05-14": 2
+            "2025-05-20": 5
+        crossGameStatus:
+          $ref: "#/components/schemas/CrossGameStatus"
+
+    RawGameStats:
+      type: object
+      description: |
+        Raw per-game stat object consumed by `moba-score-worker.js`.
+        All numeric values are in the 0–100 percentile range before scaling.
+      properties:
+        matchesCount:
+          type: integer
+          description: Total ranked matches played (used to compute weight)
+          example: 87
+        rankPercentile:
+          type: number
+          description: Rank skill converted to 0–100 scale
+          example: 55
+        winEff:
+          type: number
+          description: Win efficiency score 0–100
+          example: 62
+        combatPercentile:
+          type: number
+          description: Combat performance percentile 0–100
+          example: 48
+        economyPercentile:
+          type: number
+          description: Economy skill percentile 0–100
+          example: 39
+
+    CalendarDay:
+      type: object
+      description: A single cell in the monthly activity calendar grid
+      properties:
+        date:
+          type: string
+          nullable: true
+          description: ISO date string (`YYYY-MM-DD`), or `null` for padding cells outside the month
+          example: "2025-05-14"
+        count:
+          type: integer
+          description: Number of matches played on this day
+          example: 3
+        colorClass:
+          type: string
+          enum: [level-empty, level-0, level-1, level-2, level-3]
+          description: |
+            CSS class used to render heatmap colour:
+            `level-empty` = outside month, `level-0` = 0 matches,
+            `level-1` = 1–2, `level-2` = 3–4, `level-3` = 5+
+          example: level-2
+        dayNum:
+          type: integer
+          nullable: true
+          description: Day-of-month number (1–31), or absent for padding cells
+          example: 14

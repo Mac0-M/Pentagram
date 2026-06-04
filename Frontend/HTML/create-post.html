@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pentagram - Create Post</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+
+    <link rel="stylesheet" href="../CSS/global-style.css" />
+    <link rel="stylesheet" href="../CSS/header-style.css" />
+    <link rel="stylesheet" href="../CSS/create-post-style.css" />
+    <link rel="stylesheet" href="../CSS/feeds-style.css" />
+  </head>
+  <body>
+    <div id="navigation-placeholder"></div>
+
+    <div class="main-wrapper">
+      <main class="main-content feed-page-override">
+        <div class="create-post-container box-card">
+          <div class="action-bar">
+            <button class="btn-text cancel-btn" onclick="handleCancel()">
+              Cancel
+            </button>
+            <h3 class="action-title">New Post</h3>
+            <button class="btn-text btn-primary" onclick="handleShare()">
+              Share
+            </button>
+          </div>
+
+          <div class="media-upload-container">
+            <input
+              type="file"
+              id="fileInput"
+              accept="image/*,video/*"
+              multiple
+              hidden
+              onchange="handleFileSelect(event)"
+            />
+
+            <div
+              id="upload-placeholder"
+              onclick="document.getElementById('fileInput').click()"
+            >
+              <i class="fa-solid fa-photo-film"></i>
+              <p>Select up to 10 Photos or Videos</p>
+            </div>
+
+            <div
+              id="preview-carousel"
+              class="preview-carousel"
+              style="display: none"
+            ></div>
+
+            <button type="button" id="preview-prev-btn" onclick="movePreviewSlide(-1)" style="display: none; position: absolute; left: 15px; top: 50%; transform: translateY(-50%); z-index: 12; background: rgba(0,0,0,0.65); border: none; color: #fff; width: 38px; height: 38px; border-radius: 50%; cursor: pointer; align-items: center; justify-content: center; font-size: 1rem;">
+                <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            <button type="button" id="preview-next-btn" onclick="movePreviewSlide(1)" style="display: none; position: absolute; right: 15px; top: 50%; transform: translateY(-50%); z-index: 12; background: rgba(0,0,0,0.65); border: none; color: #fff; width: 38px; height: 38px; border-radius: 50%; cursor: pointer; align-items: center; justify-content: center; font-size: 1rem;">
+                <i class="fa-solid fa-chevron-right"></i>
+            </button>
+
+            <div id="preview-counter" style="display: none; position: absolute; top: 15px; left: 15px; background: rgba(0, 0, 0, 0.75); padding: 5px 12px; border-radius: 20px; color: #fff; font-size: 0.85rem; font-weight: 600; z-index: 12; letter-spacing: 0.5px;">1 / 1</div>
+
+            <button
+              id="add-more-btn"
+              class="add-more-btn"
+              onclick="document.getElementById('fileInput').click()"
+              style="display: none"
+            >
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+
+          <div class="caption-container">
+            <div class="user-info-post">
+              <img src="../assets/logo.png" class="avatar" alt="User" />
+            </div>
+            <div class="textarea-wrapper">
+              <textarea
+                id="captionText"
+                placeholder="Write a caption..."
+                oninput="updateCharCount()"
+              ></textarea>
+              <div class="char-counter" id="charCounter">0 / 5000</div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="../JS/components/header.js"></script>
+    <script src="../JS/pages/create-post.js"></script>
+  </body>
+</html>

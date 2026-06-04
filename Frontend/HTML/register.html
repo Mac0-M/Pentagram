@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pentagram - Register</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <link rel="stylesheet" href="../CSS/global-style.css">
+    <link rel="stylesheet" href="../CSS/auth-landing-style.css">
+</head>
+
+<body class="auth-body">
+
+    <div class="auth-page-container">
+        <div class="glow-orb orb-1"></div>
+        <div class="glow-orb orb-2"></div>
+
+        <div class="auth-wrapper">
+            <div class="logo-container">
+                <img src="../assets/logo.png" alt="Pentagram" class="auth-logo-image">
+            </div>
+
+            <div class="auth-card">
+                <h3>Join the Arena</h3>
+                <p>Create an account to start tracking your legacy.</p>
+
+                <form id="register-form">
+                    <div class="input-group">
+                        <input type="text" name="username" placeholder="Gamer Tag (Username)" required>
+                        <i class="fas fa-gamepad"></i>
+                    </div>
+
+                    <div class="input-group">
+                        <input type="password" name="password" placeholder="Password" required>
+                        <i class="fas fa-lock"></i>
+                    </div>
+
+                    <div class="input-group">
+                        <input type="password" name="confirmPassword" placeholder="Confirm Password" required>
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+
+                    <button type="submit" class="auth-submit-btn">REGISTER</button>
+
+                    <p id="register-status" style="color: #7CFFB2; margin-top: 16px; text-align: center;"></p>
+
+                    <div id="qr-container" style="margin-top: 20px; text-align: center; display: none;">
+                        <img id="qr-image" src="" alt="QR Code" style="width: 200px; height: 200px;">
+                        <a id="login-next-btn" href="login.html" class="auth-submit-btn" style="display: none; margin-top: 12px; text-decoration: none;">
+                            GO TO LOGIN
+                        </a>
+                    </div>
+                </form>
+
+                <div class="auth-footer">
+                    Already have an account? <a href="login.html">Login</a>
+                </div>
+            </div>
+        </div>
+    </div>    
+    <!-- DOMPurify: Sanitize user input to prevent XSS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.5/purify.min.js"></script>
+    <!-- validator.js: Validate input fields using proven rules -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/validator/13.12.0/validator.min.js"></script>
+    <script src="../JS/pages/auth-register.js" defer></script>
+
+    <!-- Background Prefetching to cache game data instantly before user logs in (handled automatically by api_client.js) -->
+    <script src="../JS/core/api_client.js"></script>
+</body>
+</html>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>profile</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="../CSS/global-style.css" />
+  <link rel="stylesheet" href="../CSS/profile-style.css" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+
+<body class="profile-page">
+  <div class="main-wrapper">
+    <main class="main-content">
+      <div class="profile-toolbar">
+        <div id="profile-actions" class="profile-actions">
+          <button id="share-profile-btn" type="button" class="profile-action-btn" title="Share profile">
+            <i class="fas fa-share-nodes"></i>
+            <span>Share</span>
+          </button>
+        </div>
+      </div>
+      <div class="profile-columns">
+        <div class="left-column">
+          <section class="profile-summary box-card">
+            <div class="user-avatar" id="profileAvatarContainer">
+              <svg id="defaultAvatarSvg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="50" cy="50" r="50" fill="#9B9B9B" />
+                <circle cx="50" cy="42" r="18" fill="#D9D9D0" />
+                <path d="M50 65C32 65 20 77 20 85C20 88 23 90 50 90C77 90 80 88 80 85C80 77 68 65 50 65Z"
+                  fill="#D9D9D0" />
+              </svg>
+              <img id="profileAvatar" src="" alt="Profile Avatar" style="display: none;"
+                onerror="this.style.display='none'; document.getElementById('defaultAvatarSvg').style.display='block';">
+            </div>
+            <div class="profile-info">
+              <h1 id="username" class="profile-username">-</h1>
+              <div id="verifiedBadge" class="verified-row">
+                <i class="fas fa-shield-alt verified-icon"></i>
+                <span>Game ID Not Verified</span>
+              </div>
+              <div class="game-id-list">
+                <div class="game-id-item"><span class="game-name">LOL</span><span id="lolId" class="game-id-val">-</span></div>
+                <div class="game-id-item"><span class="game-name">DOTA2</span><span id="dotaId" class="game-id-val">-</span></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="cross-game-status-section box-card">
+            <h2 class="section-title">Cross Game Status</h2>
+            <div class="cross-game-card">
+              <div class="moba-score-container">
+                <div class="moba-score-ring">
+                  <div class="moba-score-content">
+                    <div id="mobaScoreValue" class="moba-score-value">-</div>
+                    <div class="moba-score-label">MOBA Skill Score</div>
+                    <div id="mobaRankBadge" class="moba-rank-badge">-</div>
+                  </div>
+                </div>
+              </div>
+              <div class="status-stats">
+                <div class="status-item">
+                  <div id="rankSkillValue" class="status-value">-</div>
+                  <div class="status-name">Rank<br>Skill</div>
+                </div>
+                <div class="status-divider"></div>
+                <div class="status-item">
+                  <div id="winEfficiencyValue" class="status-value">-</div>
+                  <div class="status-name">Win<br>Efficiency</div>
+                </div>
+                <div class="status-divider"></div>
+                <div class="status-item">
+                  <div id="combatPerformanceValue" class="status-value">-</div>
+                  <div class="status-name">Combat<br>Performance</div>
+                </div>
+                <div class="status-divider"></div>
+                <div class="status-item">
+                  <div id="economySkillValue" class="status-value">-</div>
+                  <div class="status-name">Economy<br>Skill</div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <div class="right-column">
+          <section class="skill-tags-section box-card">
+            <h2 class="section-title">Skill Tags and Attributes</h2>
+            <div class="skill-tags-layout">
+              <div class="selected-skills-panel">
+                <div class="skill-panel-header">
+                  <div>
+                    <h3 class="skill-panel-title">Selected Skills</h3>
+                    <p class="skill-panel-copy">Read-only skill tags.</p>
+                  </div>
+                </div>
+                <div id="selectedSkillTags" class="selected-skill-tags"></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="consistency-section box-card">
+            <h2 class="section-title">Consistency</h2>
+            <div class="calendar-container">
+                <div class="calendar-header">
+                  <button id="prevMonth" class="calendar-nav-btn"><i class="fas fa-chevron-left"></i></button>
+                  <h4 id="calendar-month-title">Month Year</h4>
+                  <button id="nextMonth" class="calendar-nav-btn"><i class="fas fa-chevron-right"></i></button>
+                </div>
+              <div class="calendar-grid calendar-weekdays">
+                <div>Sun</div>
+                <div>Mon</div>
+                <div>Tue</div>
+                <div>Wed</div>
+                <div>Thu</div>
+                <div>Fri</div>
+                <div>Sat</div>
+              </div>
+              <div id="calendar-cells" class="calendar-grid"></div>
+            </div>
+          </section>
+
+          <section class="trophy-section box-card">
+            <div class="section-title-row">
+              <h2 class="section-title">Trophy</h2>
+            </div>
+            <div class="collection-note">Read-only trophy collection.</div>
+            <div id="trophyGrid" class="trophy-grid"></div>
+          </section>
+
+          <section class="achievements-section box-card">
+            <div class="section-title-row">
+              <h2 class="section-title">Achievements</h2>
+            </div>
+            <div class="collection-note">Read-only achievement collection.</div>
+            <div id="achievementsCard" class="achievements-card"></div>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    window.PentagramPageContext = {
+      pagePath: window.location.pathname.toLowerCase(),
+      profileShareId: new URLSearchParams(window.location.search).get('t') || '',
+      profileUsername: '',
+      loggedInUsername: '',
+      authToken: '',
+      isAuthPage: false,
+      isProfilePage: true,
+      isOwnerProfile: false
+    };
+  </script>
+  <script src="../JS/core/api_client.js"></script>
+  <script src="../JS/pages/profile.js"></script>
+</body>
+</html>
