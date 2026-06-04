@@ -1,51 +1,45 @@
 {
   "version": 2,
-  "builds": [
+  "rewrites": [
     {
-      "src": "Backend/server.js",
-      "use": "@vercel/node"
+      "source": "/api/:path*",
+      "destination": "https://pentagram-3pvi.onrender.com/api/:path*"
     },
     {
-      "src": "Frontend/**",
-      "use": "@vercel/static"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "Backend/server.js"
+      "source": "/uploads/:path*",
+      "destination": "https://pentagram-3pvi.onrender.com/uploads/:path*"
     },
     {
-      "src": "/uploads/(.*)",
-      "dest": "Backend/server.js"
+      "source": "/service_worker.js",
+      "destination": "/Frontend/service_worker.js"
     },
     {
-      "src": "/HTML/(.*)",
-      "dest": "Frontend/HTML/$1"
+      "source": "/CSS/:path*",
+      "destination": "/Frontend/CSS/:path*"
     },
     {
-      "src": "/CSS/(.*)",
-      "dest": "Frontend/CSS/$1"
+      "source": "/JS/:path*",
+      "destination": "/Frontend/JS/:path*"
     },
     {
-      "src": "/JS/(.*)",
-      "dest": "Frontend/JS/$1"
+      "source": "/assets/:path*",
+      "destination": "/Frontend/assets/:path*"
     },
     {
-      "src": "/assets/(.*)",
-      "dest": "Frontend/assets/$1"
+      "source": "/HTML/:path*",
+      "destination": "/Frontend/HTML/:path*"
     },
     {
-      "src": "/service_worker.js",
-      "dest": "Frontend/service_worker.js"
+      "source": "/(.*).html",
+      "destination": "/Frontend/HTML/$1.html"
     },
     {
-      "src": "/(.*).html",
-      "dest": "Frontend/HTML/$1.html"
+      "source": "/",
+      "destination": "/Frontend/HTML/index.html"
     },
     {
-      "src": "/",
-      "dest": "Frontend/HTML/index.html"
+      "source": "/(.*)",
+      "destination": "/Frontend/HTML/$1"
     }
   ]
 }
