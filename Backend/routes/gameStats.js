@@ -66,44 +66,8 @@ async function getLatestDDragonVersion() {
 
 // Helper: Sync Profile Moba score and ranking
 async function syncProfileScoreAndRank(username) {
-    try {
-        const profile = await Profile.findOne({ username });
-        if (!profile) return;
-
-        if (!profile.verified) {
-            await Profile.updateOne(
-                { username },
-                {
-                    $set: {
-                        mobaScore: null,
-                        rankTierLabel: null
-                    }
-                }
-            );
-            return;
-        }
-
-        const statsList = await GameStats.find({ username });
-        if (statsList && statsList.length > 0) {
-            let maxStats = statsList[0];
-            for (const stats of statsList) {
-                if (stats.score > maxStats.score) {
-                    maxStats = stats;
-                }
-            }
-            await Profile.updateOne(
-                { username },
-                {
-                    $set: {
-                        mobaScore: maxStats.score,
-                        rankTierLabel: maxStats.rankingLabel
-                    }
-                }
-            );
-        }
-    } catch (err) {
-        console.error(`[SCORE-SYNC] Failed to sync profile score for ${username}:`, err.message);
-    }
+    // 💡 ปล่อยว่างไว้: คะแนน mobaScore และ rankTierLabel ของ Profile จะถูกคำนวณแบบเฉลี่ยถ่วงน้ำหนัก
+    // ผ่าน Endpoint /api/profile/sync-matches เท่านั้น เพื่อไม่ให้มีสูตรคำนวณซ้ำซ้อนแยกกันในระบบ
 }
 
 // 9. LEADERBOARD FRIEND SCORES (FROM MongoDB GameStats & Profiles)
@@ -117,22 +81,8 @@ router.get('/get-friend-scores', async (req, res) => {
                 continue;
             }
 
-            const statsList = await GameStats.find({ username: profile.username });
-
-            let score = profile.mobaScore || 300;
-            let ranking = profile.rankTierLabel || 'Iron Vanguard';
-
-            if (statsList && statsList.length > 0) {
-                let maxStats = statsList[0];
-                for (const stats of statsList) {
-                    if (stats.score > maxStats.score) {
-                        maxStats = stats;
-                    }
-                }
-                score = maxStats.score;
-                ranking = maxStats.rankingLabel || 'Iron Vanguard';
-            }
-
+            const score = profile.mobaScore !== null && profile.mobaScore !== undefined ? profile.mobaScore : 300;
+            const ranking = profile.rankTierLabel || 'Iron Vanguard';
             const avatar = profile.avatar || '';
 
             friendScores.push({

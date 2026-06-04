@@ -143,24 +143,82 @@ npx http-server -p 8080
 เปิดเว็บบราวเซอร์แล้วเข้าไปยังลิงก์:
 👉 **`http://localhost:8080/HTML/index.html`**
 
-### 5. การติดตั้งบน Vercel (Cloud Deployment)
-โปรเจกต์นี้ได้รับการปรับปรุงให้รองรับการ Deploy ทั้งระบบหน้าบ้าน (Frontend Static Content) และหลังบ้าน (Backend Serverless Functions) บนคลาวด์ Vercel พร้อมกันผ่านไฟล์ [vercel.json](file:///c:/Users/visar/Downloads/lab%20all/Pentagram/Pentagram/vercel.json) ที่อยู่ในโฟลเดอร์หลัก
+### 5. การติดตั้งบน Cloud (Frontend บน Vercel + Backend บน Render)
 
-#### ขั้นตอนการ Deploy:
-1. **ติดตั้ง Vercel CLI (หากยังไม่มี)**:
-   ```bash
-   npm install -g vercel
+โปรเจกต์นี้ได้รับการปรับปรุงให้สามารถแยกการทำงานโดยนำ **Frontend (Static HTML/CSS/JS)** ไปรันบน **Vercel** และนำ **Backend (Node.js/Express)** ไปรันบน **Render** ซึ่งทำให้เสถียรกว่าและไม่ติดข้อจำกัด Serverless Timeouts ของ Vercel
+
+#### 1. การตั้งค่า Backend บน Render
+1. สมัคร/ล็อกอินเข้าใช้งาน [Render.com](https://render.com/)
+2. คลิกปุ่ม **New +** -> **Web Service** และนำเข้า Repository นี้
+3. ตั้งค่าบริการเว็บเซิร์ฟเวอร์:
+   * **Name:** `pentagram-backend`
+   * **Runtime:** `Node`
+   * **Root Directory:** `Backend` *(ต้องพิมพ์ว่า `Backend` เพื่อให้รันในโฟลเดอร์หลังบ้านที่มี `package.json` เท่านั้น)*
+   * **Build Command:** `npm install`
+   * **Start Command:** `npm start`
+4. ไปที่เมนู **Environment** แล้วกดปุ่ม **Add Environment Variable** เพื่อเพิ่มตัวแปรแวดล้อมดังนี้:
+   * `MONGO_URI`: ลิงก์เชื่อมต่อฐานข้อมูล MongoDB Atlas (ตัวอย่าง: `mongodb+srv://admin:1234@cluster0.grgep3u.mongodb.net/pentagram`)
+   * `RIOT_API_KEY`: คีย์ Riot Games API ปัจจุบันของคุณ
+   * `RIOT_REGION`: `sea` (ภูมิภาคสำหรับค้นหาไอดี)
+   * `JWT_SECRET`: คีย์ลับที่ใช้เข้ารหัส Token (ตั้งค่าคีย์สุ่มที่มีความปลอดภัยสูง)
+5. กด **Create Web Service** และรอจนกว่ากระบวนการ Deploy เสร็จสิ้น คุณจะได้รับ URL ของ Backend (ตัวอย่างเช่น `https://pentagram-3pvi.onrender.com`)
+
+#### 2. การตั้งค่า Frontend บน Vercel (ระบบ Proxy)
+1. เปิดไฟล์ [vercel.json] ในโฟลเดอร์หลัก และตรวจสอบให้แน่ใจว่าได้ระบุ URL Backend ของ Render ที่คุณได้จากขั้นตอนข้างต้นลงในส่วน `destination` เรียบร้อยแล้ว:
+   ```json
+   {
+     "version": 2,
+     "rewrites": [
+       {
+         "source": "/api/:path*",
+         "destination": "https://pentagram-3pvi.onrender.com/api/:path*"
+       },
+       {
+         "source": "/uploads/:path*",
+         "destination": "https://pentagram-3pvi.onrender.com/uploads/:path*"
+       },
+       ...
+     ]
+   }
    ```
-2. **สั่งคำสั่ง Deploy ในโฟลเดอร์หลักของโปรเจกต์**:
-   ```bash
-   vercel
-   ```
-3. **ตั้งค่า Environment Variables ในหน้า Vercel Dashboard**:
-   เมื่อสร้างโปรเจกต์สำเร็จ ให้เปิดแท็บ **Settings > Environment Variables** ในแดชบอร์ด Vercel แล้วกำหนดตัวแปรดังนี้:
-   * `MONGO_URI`: ลิงก์สำหรับต่อฐานข้อมูล (แนะนำให้ใช้ MongoDB Atlas เนื่องจาก Vercel ไม่สามารถใช้ Local Host ได้)
-   * `RIOT_API_KEY`: คีย์สำหรับดึงข้อมูล Riot Games API
-   * `RIOT_REGION`: ภูมิภาคสำหรับค้นหาไอดีเกม (เช่น `sea`)
-   * `JWT_SECRET`: คีย์ลับที่ใช้เข้ารหัส JWT Token
+2. สมัคร/ล็อกอินเข้าใช้งาน [Vercel](https://vercel.com/)
+3. คลิก **Add New -> Project** และนำเข้า Repository นี้
+4. ตั้งค่าโครงการ:
+   * **Framework Preset:** `Other` (เนื่องจากใช้เป็น Static HTML/JS)
+   * **Root Directory:** ให้ใช้ `.` (Root ของโปรเจกต์หลัก ไม่ต้องสลับไปยังโฟลเดอร์ Frontend เนื่องจาก Vercel จะจัดการเส้นทางการให้บริการไฟล์ผ่านไฟล์ `vercel.json` ให้อัตโนมัติ)
+5. คลิก **Deploy**
+
+---
+
+### 🚀 การเรียกใช้และการปิด/เปิดระบบใหม่ (How to Run & Restart)
+
+#### 1. ในสภาพแวดล้อม Production (บน Cloud)
+* **ไม่ต้องทำอะไรเพิ่มเติมเมื่อปิดเว็บหรือปิดคอมพิวเตอร์:** ทั้งระบบ Frontend บน Vercel และ Backend บน Render จะรันอยู่บนคลาวด์ตลอด 24 ชั่วโมง 7 วัน
+* คุณและผู้ใช้คนอื่นๆ สามารถเรียกใช้ระบบได้ทันทีโดยการเข้า URL ของ Vercel (ตัวอย่างเช่น `https://your-app.vercel.app`)
+* *หมายเหตุสำหรับ Render แพลนฟรี:* หากไม่มีทราฟฟิกเข้ามาเป็นเวลา 15 นาที Backend จะหลับ (Sleep) การเรียกใช้งานครั้งแรกของวันอาจจะดีเลย์ประมาณ 30-50 วินาทีเพื่อรอเซิร์ฟเวอร์ตื่น (Spin-up)
+
+#### 2. ในสภาพแวดล้อม Local Development (รันบนเครื่องตัวเองเพื่อแก้ไขโค้ด)
+หากคุณต้องการพัฒนาโปรเจกต์ต่อหรือแก้ไขไฟล์บนคอมพิวเตอร์ตัวเอง สามารถเลือกเปิดระบบใหม่ได้ 2 วิธี:
+
+* **วิธีที่ A: รันแบบ Backend เสิร์ฟ Frontend ในตัว (ง่ายและสะดวกที่สุด)**
+  1. เปิด Terminal
+  2. พิมพ์คำสั่ง:
+     ```bash
+     cd Backend
+     npm start
+     ```
+  3. เปิดเบราว์เซอร์แล้วเข้าใช้งานผ่าน: `http://localhost:3000/HTML/index.html` (พอร์ต 3000 ของ Express จะดึงข้อมูล API และให้บริการไฟล์ HTML ไปพร้อมกันโดยตรง)
+
+* **วิธีที่ B: รันผ่าน Vercel CLI (เพื่อทดสอบระบบ Proxy เสมือนบน Cloud จริง)**
+  1. ติดตั้ง Vercel CLI (ติดตั้งครั้งแรกครั้งเดียว):
+     ```bash
+     npm install -g vercel
+     ```
+  2. สั่งคำสั่งรันเซิร์ฟเวอร์จำลองในโฟลเดอร์หลักของโปรเจกต์:
+     ```bash
+     vercel dev
+     ```
+  3. เปิดเบราว์เซอร์ที่: `http://localhost:3000` (ระบบ Vercel CLI จะช่วยเสิร์ฟหน้าเว็บในเครื่อง และทำหน้าที่ Proxy ข้อมูล `/api` ไปยัง Render Backend จริงให้อัตโนมัติ)
 
 ---
 

@@ -46,3 +46,5 @@ tmp/
 # agents
 .agents
 
+.vercel
+.env*
