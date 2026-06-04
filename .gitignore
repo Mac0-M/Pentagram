@@ -44,5 +44,5 @@ tmp/
 .cache/
 
 # agents
-.agents/
+agents
 
